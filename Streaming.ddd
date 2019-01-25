@@ -1,0 +1,121 @@
+vdi_qxl         -> 0.0
+vdi_qxl X       -> vdi_qxl := X
+
+vdi Body ->
+    Body
+
+    framed_box "#555",       400,   0, 700, 200, { align 80%; render "QEMU" }
+    framed_box "#AAA",       400, 200, 700, 200, { align 80%; render "Guest" }
+    framed_box "darkgreen", -400,  25, 200, 200, "SPICE Client"
+    framed_box "darkred",    300,  25, 400, 150, "SPICE Server"
+    locally
+        show vdi_qxl
+        framed_box "darkblue",   200, 175, 200, 150, "QXL"
+    locally
+        show 1 - vdi_qxl
+        framed_box "red",        200, 175, 200, 150, "Streaming Agent"
+    framed_box "darkorange",     400, 175, 200, 150, "VD Agent"
+
+    framed "Orange", { double_arrow -125, 25, 400, 100, 50, 60% }
+    box -125, 25, 400, 100,
+        align 50%
+        vertical_align 50%
+        paragraph "SPICE protocol"
+
+computer_para Step:integer, N:real, Text:text ->
+    paragraph text(text_range(Text, 0, integer(fade_at(N, Step) * (text_length(Text) + 5))) & " ")
+
+app_steps -> 16
+
+app_adjust 0, N:real, Base:integer, Body -> locally Body
+app_adjust 1, N:real, Base:integer, Body ->
+    app_adjust_1 (N-Base-1) mod app_steps, Base, Body
+app_adjust 2, N:real, Base:integer, Body ->
+    app_adjust_2 (N-Base-1) mod app_steps, Base, Body
+app_adjust_1 N:real, Base:integer, Body ->
+    locally
+        if N in 0..1 then
+            translate 0, -450 * N, 0
+            scale 50%
+            color "#FAA", 80%
+            app_translate Base, N^0.5
+            Body
+        if N in 1..2 then
+            translate -600 * (N-1), -450, 0
+            scale 50%
+            color "#AFA", 80%
+            app_translate Base, 1
+            Body
+app_adjust_2 N:real, Base:integer, Body ->
+        if N in 2..3 then
+            translate -600, -250*(3-N)-200, 0
+            scale 50%
+            color "#AAF", 80%
+            app_translate Base, 3-N
+            Body
+
+app_translate  0, S:real ->                              rectangle 900, 700
+app_translate  1, S:real -> translate -350*S,  240*S, 0; rectangle 350, -240, 50, 50
+app_translate  2, S:real -> translate      0,  -50*S, 0; rectangle 0, 50, 550, 350
+app_translate  5, S:real -> translate      0, -130*S, 0; rectangle 0, 130, 520, 130
+app_translate  6, S:real -> translate      0,  -30*S, 0; rectangle 0, 30, 520, 300
+app_translate  8, S:real -> translate -150*S,   50*S, 0; rectangle 150, -50, 200, 70
+app_translate 11, S:real -> translate -195*S,   50*S, 0; rectangle 150, -50, 200, 70
+
+app Mode:integer, N:real ->
+    app_adjust Mode, N,  0, { app_background  N -  0 }
+    app_adjust Mode, N,  1, { app_trash       N -  1 }
+    app_adjust Mode, N,  2, { app_box         N -  2 }
+    app_adjust Mode, N,  5, { app_title       N -  5 }
+    app_adjust Mode, N,  6, { app_text        N -  6 }
+    app_adjust Mode, N,  8, { app_button      N -  8 }
+    app_adjust Mode, N, 11, { app_button_text N - 11 }
+
+app_background N ->
+    color "#ACF"
+    rectangle 800, 600
+
+app_trash N ->
+    show fade_at(N, 1)
+    image 350, -240, 100%, 100%, "mac-trash.png"
+
+app_box N ->
+    color "#FAFAFA", fade_at(N, 3)
+    line_color "black"
+    line_width 2 * fade_at(N, 1)
+    rounded_rectangle 0, 50, 518, 318, 15
+    line_width 4 * fade_at(N, 2)
+    rounded_rectangle 0, 50, 505, 305, 10
+
+app_title N ->
+    text_box 0, 130, 470, 80,
+        color "black"
+        align 0%
+        vertical_align 20%
+        font "Lucida Grande", 30, bold
+        computer_para 1, N, "System Crash"
+
+app_text N ->
+    text_box 0, 30, 470, 250,
+        color "black"
+        align 0%
+        vertical_align 20%
+        font "Lucida Grande", 24, regular
+        computer_para 1, N, "I'm sorry, Dave, I'm afraid I can't do that."
+        computer_para 2, N, "Guru Meditation: 0xBADF00D"
+
+app_button N ->
+    color "#FAFAFA", fade_at(N, 3)
+    line_color "black"
+    line_width 2 * fade_at(N, 1)
+    rounded_rectangle 150, -50, 168, 58, 15
+    line_width 4 * fade_at(N, 2)
+    rounded_rectangle 150, -50, 155, 45, 10
+
+app_button_text N ->
+    text_box 195, -50, 150, 40,
+        color "black"
+        align 0%
+        vertical_align 50%
+        font "Lucida Grande", 24, bold
+        computer_para 1, N, "Retry"

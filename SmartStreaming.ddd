@@ -1,0 +1,584 @@
+presentation_title "SPICE Smart Streaming"
+presentation_logo "spice_logo.png"
+presentation_url "https://www.redhat.com"
+presentation_tao "https://github.com/c3d/spice-smart-streaming-presentation"
+presentation_author "Christophe de Dinechin (dinechin@redhat.com, IRC c3d)"
+
+// ----------------------------------------------------------------------------
+main_title_slide "Main title",
+// ----------------------------------------------------------------------------
+    title "SPICE Smart Streaming"
+    subtitle
+        $ "Optimize streaming encoding parameters for adverse conditions"
+        $
+        $ presentation_author
+
+    title_slide_logo
+
+
+// ---------------------------------------------------------------------------
+base_slide "SPICE Overview and Evolution",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Open-source remote access to virtual machines"
+    slide_picture "spice_logo_grey_background.png", 5%
+    stepping
+    story
+        * "Remote access to virtual machines"
+        ** "Portable client: Linux, Windows, macOS (almost)"
+        ** "Many components: Protocol, Server, Client, Agent, QXL, ..."
+
+        * "In the middle of a painful transition to streaming"
+        ** "Initially designed to send 2D commands"
+        ** "Video detection and streaming, e.g. YouTube"
+        ** "Hardware-accelerated full-screen video streaming for 3D"
+        ** "Open-source specific issues: H264, patents, etc"
+
+        * "Streaming is more sensitive to the environment"
+        ** "Smart streaming addresses that"
+
+    right_picture
+        images "rhel7_win7.png", "win7_rhel.png", "spice_schem.png", "Painful Transition.jpg", "Windows 3.jpg", "YouTube.png", "", "Patents are Evil.jpg", "", ""
+
+    right_picture
+        movie_only_at 6, "https://www.youtube.com/watch?v=Vh9msqaoJZw##input-repeat=-1##noaudio",
+            if texture_width <> 0 then
+                rectangle -145, 75, 550, 320
+            texture ""
+            line_width 6
+            line_color "red", 40% + 40% * sin(3*time)
+            color "transparent"
+            rectangle -145, 75, 550, 320
+
+        movie_only_at 7, "https://www.youtube.com/watch?v=k12cf15VvV4##input-repeat=-1##noaudio",
+
+            scale 80%
+            locally
+                texture "Gaming PC.jpg"
+                rectangle texture_width, texture_height
+
+            if texture_width > 0 then
+                path
+                    move_to -150, - 82
+                    line_to -152,  150
+                    line_to  222,  150
+                    line_to  218, - 82
+
+        image_only_at 8,
+            stamp "red", "Evil!"
+
+        image_only_at 9,
+            scale 45%
+            shader_scale 20%
+            shader_show "shaders/doom-hangar.fs",
+                if sin time ^ 2 >= time mod 1 then
+                    shader_set iGlobalTime := time mod 813
+                shader_resolution
+                shader_depth 100%
+
+        image_only_at 10,
+            scale 45%
+            shader_scale 15% + 8% * sin time
+            shader_show "shaders/doom-hangar.fs",
+                shader_resolution
+                shader_atime
+                shader_depth 100%
+
+
+import "Streaming.ddd"
+
+// ---------------------------------------------------------------------------
+base_slide "Traditional (2D) SPICE drawing model",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Sending commands describing how to draw the screen"
+    slide_picture "2D Logo.png", 5%
+    stepping
+    picture
+        locally
+            show fade_at(smooth_step,1) - 70% * fade_between(smooth_step,2,2)
+            translate_y -250 * fade_at(smooth_step, 3)
+            vdi { vdi_qxl 1 }
+        if smooth_step < 3 then
+            vdi_2d_drawing page_time * 5.5 mod app_steps
+        else
+            vdi_2d_drawing page_time * 1.3 mod app_steps
+        at_step 5
+
+    vdi_2d_drawing Step:real ->
+        locally
+            show fade_at(smooth_step, 2)
+            adjust_app S:real ->
+                translate 200 * S, 50 + 175 * S, 100 * S
+                scale 100% - 50% * S
+                app 0, Step
+
+                line_width 2
+                line_color "#8AC", 60%
+                color "#8AC", 30%
+                path
+                    move_to -400, -300,              0
+                    line_to -200, -300 - 150 * S, -100 * S
+                    line_to  200, -300 - 150 * S, -100 * S
+                    line_to  400, -300,              0
+
+            adjust_app fade_at(smooth_step, 3)
+
+        locally
+            show fade_at(smooth_step, 5)
+            translate -400, 50, 100
+            scale 50%
+            app 0, (Step + app_steps - 4) mod app_steps
+
+        locally
+            show fade_at(smooth_step, 4)
+            translate 200, 225, 100
+            app 1, Step
+            show fade_at(smooth_step, 5)
+            app 2, Step
+
+
+// ---------------------------------------------------------------------------
+base_slide "Streaming (3D) SPICE drawing model",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Use standard video encoding, hardware-accelerated"
+    slide_picture "3D Logo.png", 5%
+    stepping
+    picture
+        locally
+            translate_y -250
+            vdi { vdi_qxl fade_out_at(smooth_step, 5) }
+
+        locally
+            show fade_at(smooth_step, 1)
+            translate 200, 225, 100
+            scale 50%
+
+            locally
+                scale 50%
+                shader_scale 25%
+                shader_show "shaders/doom-hangar.fs",
+                    shader_resolution
+                    shader_atime
+                    shader_depth 100%
+
+            show fade_at(smooth_step, 2)
+            line_width 2
+            line_color_hsv -120 * fade_out_at(smooth_step, 5), 60%, 80%, 60%
+            color_hsv      -120 * fade_out_at(smooth_step, 5), 60%, 80%, 30%
+            path
+                move_to -480, -200,    0
+                line_to -200, -450, -100
+                line_to  200, -450, -100
+                line_to  480, -200,    0
+
+        locally
+            show fade_at(smooth_step, 3) * 0.7
+            if smooth_step >= 5.5 then
+                for I in 1..7 loop
+                    locally
+                        screen_position_adjust (time - I * 0.4) mod 3, I
+            else if smooth_step >= 4.5 then
+                for I in 1..15 loop
+                    locally
+                        screen_position_adjust (time - I * 0.2) mod 3, I
+            else
+                screen_position_adjust time mod 3, 0
+
+        screen_position_adjust S:real, I:integer ->
+            if S in 0..1 then
+                translate 200, 225 - 450 * S, 50
+            else if S in 1..2 then
+                translate 200 - 600 * (S-1), -225, 50
+            else if S in 2..2.5 then
+                translate -400, -225 + 450 * (S-2), 50
+                show fade_at(smooth_step, 4)
+            else
+                show 0
+
+            if I > 0 then scale 5% else scale 15%
+            shader_scale 25%
+            shader_show "shaders/doom-hangar.fs",
+                shader_resolution
+                if I > 0 then
+                    shader_set iGlobalTime := (integer (time * 15) / 15) mod 813
+                else
+                    shader_set iGlobalTime := (integer (time / 3) * 3) mod 813
+                shader_depth 100%
+
+        locally
+            show fade_at(smooth_step, 4)
+            translate -400, 100, 50
+
+            scale 20%
+            if smooth_step >= 5.5 then
+                shader_scale 5%
+            else
+                shader_scale 25%
+            shader_show "shaders/doom-hangar.fs",
+                shader_resolution
+                if smooth_step >= 5.5 then
+                    shader_set iGlobalTime := (integer (time * 10) * 0.1 - 2) mod 813
+                else if smooth_step >= 4.5 then
+                    shader_set iGlobalTime := (integer (time * 20) * 0.05 - 1) mod 813
+                else
+                    shader_set iGlobalTime := (integer (time / 3) * 3 - 3) mod 813
+                shader_depth 100%
+
+
+// ---------------------------------------------------------------------------
+base_slide "Issues and bottlenecks with streaming",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Not completely straightforward to identify"
+    stepping
+    picture
+        locally
+            translate_y -250 * fade_out(page_time, 1)
+            vdi { vdi_qxl 0 }
+            flame -400, -50, "Client CPU"
+            flame -200, -25, "Bandwidth"
+            flame  -50, -75, "Latency"
+            flame  150, -50, "Host CPU"
+            flame  300,-100, "GPU (Draw)"
+            flame  450, -50, "GPU (Encode)"
+
+        at_step 1
+
+flame_level  "Client CPU"       -> 0.0
+flame_level  "Bandwidth"        -> 0.0
+flame_level  "Latency"          -> 0.0
+flame_level  "Host CPU"         -> 0.0
+flame_level  "GPU (Draw)"       -> 0.0
+flame_level  "GPU (Encode)"     -> 0.0
+
+flame_target "Client CPU"       -> 0
+flame_target "Bandwidth"        -> 0
+flame_target "Latency"          -> 0
+flame_target "Host CPU"         -> 0
+flame_target "GPU (Draw)"       -> 0
+flame_target "GPU (Encode)"     -> 0
+
+flame_invert N:integer -> N := 1 - N
+
+flame X, Y, Name ->
+    active_widget
+        interpolate 5%, flame_target Name, flame_level Name
+        show flame_level Name
+        image X, Y, 60%, 80% + 5% * sin (0.9*time), "Fire.png"
+        text_box X, Y-80, 100, 160,
+            style "story"
+            color "darkred"
+            align 50%
+            vertical_align 10%
+            bold
+            paragraph Name
+        on "click",
+            flame_invert flame_target Name
+
+
+// ---------------------------------------------------------------------------
+base_slide "Creating tools to help identify problems",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "A real-time, graphing, flight recorder"
+    stepping
+    picture
+        only_at 1..2,
+            image 0, 50, 48%, 48%, "Recorder Talk.png"
+        only_at 2,
+            stamp "red", "Too Late!"
+    only_at 3..4,
+        full_screen_movie fade_at(smooth_step, 4), "movies/Recorder Interactivity.mp4##noaudio##input-repeat=-1"
+    at_step 4
+
+
+// ---------------------------------------------------------------------------
+base_slide "Adding an extensible feedback mechanism",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "SPICE metrics: tagged data, measured and reported individually to server"
+    stepping
+    picture
+        vdi { vdi_qxl 0 }
+        at_step 1
+        gauge -400 + time * 200 mod 600, -100, 60*sin (3.17*time) * sin(2.11*time), integer(time / 3) mod 9
+
+gauge X:real, Y:real, A:real, N:integer ->
+    image X, Y, 30%, 30%, "Speedometer.png"
+    locally
+        translate X, Y, 5
+        rotate_z A
+        color_hsv 137 * N, 100%, 100%
+        rectangle 0, 20, 4, 75
+    text_box X, Y-100, 200, 150,
+        style "story"
+        align 50%
+        vertical_align 50%
+        font_size 20
+        color_hsv 137 * N, 80%, 80%
+        gauge_text N
+
+gauge_text 0 -> $ "Frames received"
+gauge_text 1 -> $ "Frames decoded"
+gauge_text 2 -> $ "Frames displayed"
+gauge_text 3 -> $ "Frames dropped"
+gauge_text 4 -> $ "Bytes received"
+gauge_text 5 -> $ "Bytes decoded"
+gauge_text 6 -> $ "Bytes displayed"
+gauge_text 7 -> $ "Bytes dropped"
+gauge_text 8 -> $ "Queue length"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Adding an extensible control mechanism",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "SPICE parameters: dynamic parameters sent by server to agent"
+    stepping
+    picture
+        vdi { vdi_qxl 0 }
+        locally
+            show fade_out_at(smooth_step, 2)
+            gauge -400 + time * 200 mod 600, -100, 60*sin (3.17*time) * sin(2.11*time), integer(time / 3) mod 9
+        at_step 1
+        image 400, -100, 50%, 50%, "Brain.png"
+        at_step 2
+        knob 200, -0 + time * 200 mod 200, 60*sin (3.17*time) * sin(2.11*time), integer(time) mod 4
+        skip_directly_to 3
+
+knob X:real, Y:real, A:real, N:integer ->
+    image X, Y, 15%, 15%, "Knob.png"
+    locally
+        translate X+7, Y+4, 5
+        rotate_z A + 90
+        color_hsv 137 * N, 100%, 100%
+        rounded_rectangle 0, 30, 8, 15, 5
+    text_box X, Y-80, 200, 150,
+        style "story"
+        align 50%
+        vertical_align 50%
+        font_size 20
+        color_hsv 137 * N, 80%, 80%
+        knob_text N
+
+knob_text 0 -> $ "Frames per second"
+knob_text 1 -> $ "Max bytes per second"
+knob_text 2 -> $ "Avg bytes per second"
+knob_text 3 -> $ "Quality"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Adding the smarts",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "SPICE stream smarts: compute parameters from metrics"
+    slide_picture "Brain.png"
+    stepping
+    story
+        * "Configurable for experimentation purpose"
+        ** "Follow: just follow the metrics, if FPS is low, then lower FPS"
+        ** "Think: try to guess the bottleneck"
+
+        * "In practice, the simpler algorithm works just as well"
+
+    right_picture
+        images "Bidouiller.jpg", "carrey_dumber.jpg", "smart person.jpg", "Overthinking.jpg"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Typical SPICE testing setup",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle
+        color "#35A"
+        text "Left: Client  "
+        color "#A53"
+        text "Middle: Server  "
+        color "#3A5"
+        text "Right: Guest / Agent  "
+    stepping
+    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=220##stop-time=265##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Hardware-accelerated client",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "GPU-accelerated H264 rendering, direct to screen"
+    stepping
+    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=455##stop-time=505##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Enabling smart streaming in the server",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Using a tweak to select ""smart"" algorithm"
+    stepping
+    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=560##stop-time=564.5##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Looking at the response of smart streaming",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Depending on graphical workload, adjusts agent objectives"
+    stepping
+    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=587##stop-time=645##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Providing tweakable arguments",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "The list of arguments is self-documented"
+    stepping
+    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=732##stop-time=745##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Real-time algorithm tuning and tweaking",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Adjust various weights and configuration parameters in real-time"
+    stepping
+    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=768##stop-time=778##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Observing the response after adjusting for quicker reaction",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "This approach can be used to select good-enough values"
+    stepping
+    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=825##stop-time=856##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Impact of a network degradation without smart streaming",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "This is the real test: what happens when the network degrades?"
+    stepping
+    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=265##stop-time=285##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "The network accumulates frames and introduces latency",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "See accelerated playback when releasing the constraint "
+    stepping
+    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=363##stop-time=390##noaudio"
+
+// ---------------------------------------------------------------------------
+base_slide "Activating smart streaming and seeing how it reacts",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Will give new parameters for frames per second and bytes per second"
+    stepping
+    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=448##stop-time=485##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Reaction to changes in page contents",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Dynamic adjustment to optimize use of available network"
+    stepping
+    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=485##stop-time=495##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Case of a very fast, very simple page",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Page can have high FPS but low bandwidth requirements"
+    stepping
+    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=520##stop-time=535##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Return to a complex contents",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Adjusting the other way around"
+    stepping
+    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=550##stop-time=585##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Return to nominal network",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Adjusting quality back up when network returns to normal"
+    stepping
+    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=691##stop-time=720##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Highly degraded network",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "A direct look at severe picture degradation"
+    stepping
+    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=745##stop-time=900##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Very slow client, no hardware acceleration",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "macOS SPICE has no Quartz acceleration yet"
+    stepping
+    full_screen_movie "movies/4-macOS client - CPU overload.mp4##start-time=10##stop-time=50##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Smart streaming also recovers in that case",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Adjusts FPS aggressively down"
+    stepping
+    full_screen_movie "movies/4-macOS client - CPU overload.mp4##start-time=110##stop-time=150##noaudio"
+
+
+// ---------------------------------------------------------------------------
+base_slide "Conclusion",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle "Mechanism to send metrics, take action and control parameters"
+    slide_picture "spice_logo_grey_background.png", 5%
+    stepping
+    story
+        * "Tagged metrics"
+        ** "Currently FPS and BPS, received, decoded, displayed, dropped"
+        ** "Also monitoring decoder queue length"
+        ** "Can be updated without breaking the protocol"
+
+        * "Qualitative picture evaluation was too difficult"
+        ** "Used the recorder library to have quantitative results"
+        ** "Used the recorder tweaks to adjust behavior in real-time"
+        ** "A convincing way to be sure that it actually work"
+
+        * "Work is ongoing"
+
+
+// ----------------------------------------------------------------------------
+section_slide "Thank you",
+// ----------------------------------------------------------------------------
+    title page_label
+    subtitle presentation_url
+    stepping
+
+    contents 0,
+        text_box 500, -400, 600, 200,
+            style "story"
+            font_size 30
+            anchor
+                image -80, -40, 10%, 10%, "Tao3D.png"
+            paragraph "This Tao3D presentation is available at"
+            paragraph presentation_url
+    title_slide_logo

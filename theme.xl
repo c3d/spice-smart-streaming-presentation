@@ -227,7 +227,6 @@ theme_background "RedHat", Master ->
     zero N -> if N < 10 then "0" & N else N
 
 
-
 theme_boxstyle "RedHat",Master:text,Style:text->
 // ----------------------------------------------------------------------------
 //   Style for text boxes
@@ -322,11 +321,10 @@ title_slide_logo ->
 // ----------------------------------------------------------------------------
     picture
         translate 600, 450, 20
-        rotate_z -8
         texture presentation_logo
         color "white"
         scale min(300.0 / texture_width, 300.0 / texture_height)
-        rounded_rectangle 0, 0, texture_width, texture_height, 80
+        rounded_rectangle 0, 0, texture_width, texture_height, 0
 
 
 
@@ -453,6 +451,41 @@ code_box_at_step N, Title, Body ->
             code_box Title, Body
 
 
+framed Color:text, Body ->
+// ----------------------------------------------------------------------------
+//    Consistent coloring for framed shapes
+// ----------------------------------------------------------------------------
+    locally
+        radial_gradient 128, 85, 160, 256, 256,
+            gradient_color 0%, Color, 20%
+            gradient_color 100%, Color, 50%
+        color "white"
+        Body
+    locally
+        line_color Color, 80%
+        color "tranparent"
+        line_width 3
+        Body
+
+
+framed_box Color:text, X:real, Y:real, W:real, H:real, Body ->
+// ----------------------------------------------------------------------------
+//    A text box showing a code example
+// ----------------------------------------------------------------------------
+    background -50,
+        framed Color, { rectangle X, Y, W, H }
+    locally
+        framed_box_offset -> 20
+        frame_texture W-framed_box_offset, H-framed_box_offset,
+            text_box 0, 0, W-20, H-20,
+                style "story"
+                vertical_align 30%
+                align 50%
+                render Body
+        color "white"
+        rectangle X, Y, W-framed_box_offset, H-framed_box_offset
+
+
 image_box X:real, Y:real, W:real, H:real, Body ->
 // ----------------------------------------------------------------------------
 //    An image box with a cached frame texture
@@ -493,16 +526,68 @@ image_only_at N, Body ->
             Body
 
 
+movie_only_at N, Name, Body ->
+// ----------------------------------------------------------------------------
+//   Draw a movie texture only at the given time
+// ----------------------------------------------------------------------------
+    image_only_at N,
+        if smooth_step in N-0.9..N+0.9 then
+            movie_texture Name
+        else
+            movie_drop Name
+        on "pageexit",
+            movie_drop Name
+        Body
+movie_only_at N, Name ->
+    movie_only_at N, Name,
+        rectangle texture_width, texture_height
+
+
+full_screen_movie S:real, Name:text ->
+// ----------------------------------------------------------------------------
+//    Display a movie, using full screen if possible
+// ----------------------------------------------------------------------------
+    contents 50,
+        color "black", S
+        rectangle 32000, 32000
+        color "white"
+        movie_texture Name
+        if texture_width > 0 and texture_height > 0 then
+            scale min(real slide_width / texture_width, real slide_height / texture_height)
+            scale 50% + 50 % * S
+            rectangle texture_width, texture_height
+        on "pageexit",
+            movie_drop Name
+        on "key:-",
+            movie_set_time Name, movie_time Name - 10
+        on "key:+",
+            movie_set_time Name, movie_time Name + 10
+        on "key:r",
+            movie_set_time Name, 0
+        on "key:p",
+            full_screen_movie_pause := 1 - full_screen_movie_pause
+            if full_screen_movie_pause = 1 then
+                movie_pause Name
+            else
+                movie_play Name
+
+full_screen_movie_pause -> 1
+
+full_screen_movie Name:text ->
+    full_screen_movie fade_at(smooth_step, 1), Name
+
+
 images N:integer, X, Y ->
 // ----------------------------------------------------------------------------
 //   Display the images in a list one after the other
 // ----------------------------------------------------------------------------
     images N, X
     images N+1, Y
-images N:integer, X ->
+images N:integer, "" -> false
+images N:integer, Name:text ->
     image_only_at N,
-        rotate_z 7 * sin (2 * N)
-        texture X
+        rotate_z 3 * sin (2 * N) ^ 5
+        texture Name
         scale min(850.0 / texture_width, 640.0 / texture_height)
         rectangle texture_width, texture_height
 images List -> images 1, List
@@ -531,6 +616,89 @@ colored_boxes N:integer, X ->
 colored_boxes List ->
     translate_y -200
     colored_boxes 1, List
+
+
+structure List ->
+// ----------------------------------------------------------------------------
+//    Draw a data structure
+// ----------------------------------------------------------------------------
+    locally
+        translate_y 200
+        align 50%
+        vertical_align 30%
+        structure_boxes 0, List
+
+structure_boxes N:integer, Head, Tail ->
+    structure_box N, Head
+    translate_y -70
+    structure_boxes N+1, Tail
+structure_boxes N:integer, Head ->
+    structure_box N, Head
+
+structure_box N:integer, Body ->
+    locally
+        line_color_hsv 37 * N, 40%, 60%
+        color_hsv 20 * N, 40%, 30%
+        line_width 3
+        rectangle 520, 65
+    text_box 0, 0, 310, 30,
+        color "white"
+        font "Overpass", "Arial", 30, bold
+        render Body
+
+sequence List ->
+// ----------------------------------------------------------------------------
+//    Draw a sequence of elements
+// ----------------------------------------------------------------------------
+    locally
+        translate_y 200
+        align 50%
+        vertical_align 30%
+        sequence_boxes 0, List
+
+sequence_boxes N:integer, Head, Tail ->
+    sequence_box N, Head
+    locally
+        color "lightyellow"
+        line_color "darkorange"
+        line_width 3
+        rotate_z -90
+        translate_z 10
+        arrow 60, 0, 70, 60, 50, 60%
+    translate_y -120
+    sequence_boxes N+1, Tail
+sequence_boxes N:integer, Head ->
+    sequence_box N, Head
+
+sequence_box N:integer, Body ->
+    locally
+        line_color_hsv 37 * N, 40%, 60%
+        color_hsv 37 * N, 40%, 30%
+        line_width 3
+        rectangle 520, 65
+    text_box 0, 0, 510, 30,
+        color "white"
+        font "Overpass", "Arial", 30, bold
+        render Body
+
+
+quotation_box W, H, Text, Author ->
+// ----------------------------------------------------------------------------
+//   Draw a box to display some quotation
+// ----------------------------------------------------------------------------
+   locally
+        color "black"
+        rectangle W + 30, H + 30
+        line_color "white"
+        line_width 5
+        rectangle W + 15, H + 15
+   text_box 0, 0, W, H,
+       style "quote"
+       italic
+       paragraph Text
+       roman
+       align 80%
+       paragraph Author
 
 
 math_eq Eq:text ->
@@ -565,12 +733,23 @@ tao "grey"                              -> "#555"
 //
 // ============================================================================
 
-TOTAL_DURATION -> 2100 // 20 minutes
+TOTAL_DURATION -> 1200 // 20 minutes
 START_TIME     -> 0.0
 
 key "Right" -> skip 1
 key "Space" -> skip 1
 key "Left"  -> skip -1
+key "1" -> skip_directly_to 1
+key "2" -> skip_directly_to 2
+key "3" -> skip_directly_to 3
+key "4" -> skip_directly_to 4
+key "5" -> skip_directly_to 5
+key "6" -> skip_directly_to 6
+key "7" -> skip_directly_to 7
+key "8" -> skip_directly_to 8
+key "9" -> skip_directly_to 9
+key "0" -> skip_directly_to 10
+
 seconds_time -> hours * 3600 + minutes * 60 + seconds
 key "Backspace" ->
     START_TIME := seconds_time
@@ -620,16 +799,17 @@ locally
 //
 // ============================================================================
 
-viewpoint_delta_base -> 0.01
-viewpoint_delta -> viewpoint_delta_base * eye_distance
+viewpoint_delta_base    -> 0.01
+viewpoint_delta         -> viewpoint_delta_base * eye_distance
 
-shader_x        -> 0.0
-shader_y        -> 0.0
-shader_scale    -> 1.0
-shader_scale S  -> shader_scale := S
-shader_rscale   -> 1.0
-shader_rrate    -> 60.0
-shader_autoscale-> 0
+shader_x                -> 0.0
+shader_y                -> 0.0
+shader_scale            -> 1.0
+shader_scale S          -> shader_scale := S
+shader_rscale           -> 1.0
+shader_rscale S         -> shader_rscale := S
+shader_rrate            -> 60.0
+shader_autoscale        -> 0
 
 shader_show File, Arguments ->
 // ----------------------------------------------------------------------------
