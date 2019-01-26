@@ -37,6 +37,16 @@ theme_align "RedHat", "main", "subtitle"        -> align_left
 theme_color "RedHat", "main", Theme             -> color "white"
 theme_color "RedHat", "section", Theme          -> color "white"
 
+theme_font  "RedHat", "movie", "title"          -> font "Overpass", bold, 60
+theme_size  "RedHat", "movie", "title"          -> 60
+theme_color "RedHat", "movie", "title"          -> color "white"
+theme_align "RedHat", "movie", "title"          -> align 50%; vertical_align 50%
+
+theme_font  "RedHat", "movie", "subtitle"       -> font "Overpass", bold, 45
+theme_size  "RedHat", "movie", "subtitle"       -> 45
+theme_color "RedHat", "movie", "subtitle"       -> color "white"
+theme_align "RedHat", "movie", "subtitle"       -> align 50%; vertical_align 50%
+
 theme_font  "RedHat", Master, "title"           -> font "Overpass", weight 300
 theme_size  "RedHat", Master, "title"           -> 65
 theme_font  "RedHat", Master, "subtitle"        -> font "Overpass"
@@ -168,6 +178,13 @@ theme_background "RedHat", "section" ->
     theme_background "RedHat", "main"
 
 
+theme_background "RedHat", "movie" ->
+// ----------------------------------------------------------------------------
+//   No background for full-screen movies
+// ----------------------------------------------------------------------------
+    false
+
+
 theme_background "RedHat", Master ->
 // ----------------------------------------------------------------------------
 //   Draw the triangles in the background
@@ -227,6 +244,13 @@ theme_background "RedHat", Master ->
     zero N -> if N < 10 then "0" & N else N
 
 
+theme_boxstyle "RedHat","movie",Style:text->
+// ----------------------------------------------------------------------------
+//   Style for text boxes
+// ----------------------------------------------------------------------------
+    color "black", 60%
+
+
 theme_boxstyle "RedHat",Master:text,Style:text->
 // ----------------------------------------------------------------------------
 //   Style for text boxes
@@ -234,11 +258,82 @@ theme_boxstyle "RedHat",Master:text,Style:text->
     color "black"
 
 
+theme_box "RedHat","movie",Style:text, X:real,Y:real,W:real,H:real ->
+// ----------------------------------------------------------------------------
+//   Draw the background box for text and flows in movie slides
+// ----------------------------------------------------------------------------
+    contents 80,
+        theme_boxstyle "RedHat", "movie", Style
+        rectangle X, Y, W, H
+
+
+theme_text Theme:text,"movie",Style:text,X:real,Y:real,W:real,H:real,Body ->
+// ----------------------------------------------------------------------------
+//   Draw a default text box
+// ----------------------------------------------------------------------------
+    theme_box Theme, "movie", Style, X, Y, W, H
+    contents 100,
+        text_box X, Y, W, H,
+            theme_style Theme, "movie", Style
+            Body
+
+
 theme_box "RedHat",Master:text,Style:text, X:real,Y:real,W:real,H:real ->
 // ----------------------------------------------------------------------------
 //   Draw the background box for text and flows
 // ----------------------------------------------------------------------------
     false
+
+
+movie_name -> ""
+movie_timing -> 1
+movie_slide Title:text, Name:text, Body ->
+// ----------------------------------------------------------------------------
+//   Create a slide containing a full-screen movie
+// ----------------------------------------------------------------------------
+    slide_master theme, "movie", Title,
+        movie_name := Name
+        title page_label
+        stepping
+        Body
+        full_screen_movie 1, Name
+        if movie_timing = 1 then
+            contents 200,
+                text_box 800, 500, 200, 50,
+                    align 0%
+                    vertical_align 0%
+                    font "Arial", 20
+                    color "yellow"
+                    text "Time=" & movie_time movie_name
+        on "key:t",
+            movie_timing := 1 - movie_timing
+movie_slide Title:text, Name:text -> movie_slide Title, Name, false
+
+
+movie_highlight N:real..M:real, X:real, Y:real, W:real, H:real, Body ->
+// ----------------------------------------------------------------------------
+//    Higlight a region of the screen based on current movie time
+// ----------------------------------------------------------------------------
+    if movie_time movie_name in N-0.5..M+0.5 then
+        contents 90,
+            show fade_between(movie_time movie_name, N+0.5, M-0.5)
+            color "transparent"
+            line_color_hsv 90 + 20 * sin time, 100%, 100%, 90%
+            line_width 5
+            rectangle X, Y, W, H
+
+            color "black", 75%
+            line_width 0
+            rectangle X, Y + H/2 + 500, 4000, 1000
+            rectangle X, Y - H/2 - 500, 4000, 1000
+            rectangle X + W/2 + 1000, Y, 2000, H
+            rectangle X - W/2 - 1000, Y, 2000, H
+            text_box X, Y + H/2 + 50, W-10, 90,
+                align 50%
+                vertical_align 50%
+                font "Arial Rounded MT Bold", 30
+                color "yellow"
+                render Body
 
 
 
@@ -264,6 +359,14 @@ theme_layout "RedHat", "section" ->
     flow 0, -100, 1800, 150, "subtitle"
 
 
+theme_layout "RedHat", "movie" ->
+// ----------------------------------------------------------------------------
+//    Centered flows
+// ----------------------------------------------------------------------------
+    flow   0,  550, slide_width, 80, "title"
+    flow   0, -550, slide_width, 80, "subtitle"
+
+
 theme_layout "RedHat", "blank" ->
 // ----------------------------------------------------------------------------
 //    Centered flows
@@ -279,7 +382,6 @@ theme_layout "RedHat", Master:text ->
     flow    0,  -80, 1800, 700, "story"
     flow -475,  -80,  850, 700, "left"
     flow  475,  -80,  850, 700, "right"
-
 
 
 slide_picture Picture:text -> slide_picture Picture, 0%

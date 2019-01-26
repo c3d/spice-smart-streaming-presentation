@@ -1,6 +1,6 @@
 presentation_title "SPICE Smart Streaming"
 presentation_logo "spice_logo.png"
-presentation_url "https://www.redhat.com"
+presentation_url "https://www.spice-space.org"
 presentation_tao "https://github.com/c3d/spice-smart-streaming-presentation"
 presentation_author "Christophe de Dinechin (dinechin@redhat.com, IRC c3d)"
 
@@ -388,9 +388,8 @@ base_slide "Adding the smarts",
 
 
 // ---------------------------------------------------------------------------
-base_slide "Typical SPICE testing setup",
+movie_slide "Typical SPICE testing setup",  "movies/3-Smart streaming demo, accelerated case.mp4##start-time=220##stop-time=266##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle
         color "#35A"
         text "Left: Client  "
@@ -398,151 +397,154 @@ base_slide "Typical SPICE testing setup",
         text "Middle: Server  "
         color "#3A5"
         text "Right: Guest / Agent  "
-    stepping
-    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=220##stop-time=265##noaudio"
+    movie_highlight 220..224, 380, 320, 400, 100, "Starting the agent"
+    movie_highlight 225..230, -600, -50, 900, 800, "Graphical output window opens"
+    movie_highlight 235..240, 380,  0, 500, 100, "Starting agent instrumentation"
+    movie_highlight 255..265, -600, -50, 700, 900, "Starting client-side instrumentation"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Hardware-accelerated client",
+movie_slide "Hardware-accelerated client", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=455##stop-time=505##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "GPU-accelerated H264 rendering, direct to screen"
-    stepping
-    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=455##stop-time=505##noaudio"
+    movie_highlight 455..460, -650, 50, 600, 800, "Client frames/bytes per second"
+    movie_highlight 460..465, -50,  50, 600, 800, "Server frames/bytes per second"
+    movie_highlight 465..470,  650, -50, 800, 500, "Variable GPU workload"
+    movie_highlight 470..475,  350, -450, 1200, 200, "Agent parameters (not active yet)"
+    movie_highlight 475..480,  650, -50, 800, 500, "GPU-intensive workload"
+    movie_highlight 480..485, -650, -150, 600, 400, "Client sees increase in BPS"
+    movie_highlight 485..490, -650, 250, 600, 400, "Client sees drop in FPS"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Enabling smart streaming in the server",
+movie_slide "Enabling smart streaming in the server", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=560##stop-time=564.5##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "Using a tweak to select ""smart"" algorithm"
-    stepping
-    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=560##stop-time=564.5##noaudio"
+    movie_highlight 560..565, -80, -130, 400, 100, "Activate 'dumb' algorithm"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Looking at the response of smart streaming",
+movie_slide "Looking at the response of smart streaming", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=587##stop-time=635##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "Depending on graphical workload, adjusts agent objectives"
-    stepping
-    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=587##stop-time=645##noaudio"
+    movie_highlight 585..590,  50, -350, 600, 400, "Server computes parameters"
+    movie_highlight 590..595, 650, -350, 600, 400, "Agent applies parameters"
+    movie_highlight 598..605, 625,  -80, 650, 500, "Change GPU workload"
+    movie_highlight 610..615, 575,   90, 650, 500, "Very simple, 60 FPS workload"
+    movie_highlight 615..620, -650, 50, 600, 800, "Client FPS go up, bandwidth goes down"
+    movie_highlight 620..625,  50, -350, 600, 400, "Server follows: FPS++, BPS--"
+    movie_highlight 625..630, 650, -350, 600, 400, "Agent configures encoder"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Providing tweakable arguments",
+movie_slide "Providing tweakable arguments", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=732##stop-time=745##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "The list of arguments is self-documented"
-    stepping
-    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=732##stop-time=745##noaudio"
+    movie_highlight 732..737, -80, -130, 400, 100, "Show server list of tweaks"
+    movie_highlight 737..745,  50, 300, 900, 250, "Tweaks listed in server log"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Real-time algorithm tuning and tweaking",
+movie_slide "Real-time algorithm tuning and tweaking", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=768##stop-time=795##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "Adjust various weights and configuration parameters in real-time"
-    stepping
-    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=768##stop-time=778##noaudio"
+    movie_highlight 768..775, -80, -130, 500, 100, "Make FPS response quicker"
+    movie_highlight 775..780, 575,   90, 650, 500, "Faster impact of workload change"
+    movie_highlight 780..790, -650, 50, 600, 800, "Observe change in FPS rate"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Observing the response after adjusting for quicker reaction",
+movie_slide "Observing the response after adjusting for quicker reaction", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=825##stop-time=856##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "This approach can be used to select good-enough values"
-    stepping
-    full_screen_movie "movies/3-Smart streaming demo, accelerated case.mp4##start-time=825##stop-time=856##noaudio"
+    movie_highlight 825..830, 575,   90, 650, 500, "A variety of GPU workloads"
+    movie_highlight 830..835, -650, 50, 600, 800, "Quickly measured by the client"
+    movie_highlight 835..840, 650, -350, 600, 400, "Agent responds faster"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Impact of a network degradation without smart streaming",
+movie_slide "Impact of a network degradation without smart streaming", "movies/5-Networking (take 2).mp4##start-time=265##stop-time=285##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "This is the real test: what happens when the network degrades?"
-    stepping
-    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=265##stop-time=285##noaudio"
+    movie_highlight 265..270, -25, 100, 650, 500, "Demanding workload"
+    movie_highlight 270..275, -625, -450, 750, 100, "Restricted bandwidth"
+    movie_highlight 275..280, -650, 50, 600, 800, "Network-limited BPS and FPS"
+    movie_highlight 280..285, -25, 100, 650, 500, "Client skips, latency increases"
 
 
 // ---------------------------------------------------------------------------
-base_slide "The network accumulates frames and introduces latency",
+movie_slide "The network accumulates frames and introduces latency", "movies/5-Networking (take 2).mp4##start-time=363##stop-time=390##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
-    subtitle "See accelerated playback when releasing the constraint "
-    stepping
-    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=363##stop-time=390##noaudio"
+    subtitle "The network is buffering and releasing frames "
+    movie_highlight 363..367, -625, -450, 750, 100, "Lifting restriction"
+    movie_highlight 367..372, -650, 50, 600, 800, """Catch-up"" spike"
+    movie_highlight 372..375, -625, -450, 750, 100, "Restoring restrictions"
+    movie_highlight 375..380, -25, 100, 650, 500, "Client freezes"
+    movie_highlight 380..385,  625,200, 600, 400, "Encoder ends up blocked"
+    movie_highlight 385..390, -25, 100, 650, 500, "Playback is very erratic"
+
 
 // ---------------------------------------------------------------------------
-base_slide "Activating smart streaming and seeing how it reacts",
+movie_slide "Activating smart streaming and seeing how it reacts", "movies/5-Networking (take 2).mp4##start-time=448##stop-time=485##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "Will give new parameters for frames per second and bytes per second"
-    stepping
-    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=448##stop-time=485##noaudio"
+    movie_highlight 448..453, -50, -300, 650, 100, "Select 'dumb' algorithm"
+    movie_highlight 453..463, 650, -350, 600, 400, "BPS and FPS are now guided"
+    movie_highlight 463..468, -650, 50, 600, 800, "Client reports drop in BPS"
+    movie_highlight 468..473, 650, -350, 600, 400, "BPS drops faster than FPS"
+    movie_highlight 473..478, -25, 100, 650, 500, "Low FPS, degraded picture, NO latency"
+    movie_highlight 478..483,  625,200, 600, 400, "Encoder is NOT blocked"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Reaction to changes in page contents",
+movie_slide "Case of a very fast, very simple page", "movies/5-Networking (take 2).mp4##start-time=520##stop-time=545##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
-    subtitle "Dynamic adjustment to optimize use of available network"
-    stepping
-    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=485##stop-time=495##noaudio"
-
-
-// ---------------------------------------------------------------------------
-base_slide "Case of a very fast, very simple page",
-// ----------------------------------------------------------------------------
-    title page_label
     subtitle "Page can have high FPS but low bandwidth requirements"
-    stepping
-    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=520##stop-time=535##noaudio"
+    movie_highlight 520..525, -25, 100, 650, 500, "Switch to fast and simple contents"
+    movie_highlight 525..530, -650, 50, 600, 800, "Client FPS goes up, BPS remains low"
+    movie_highlight 530..535, 650, -350, 600, 400, "Agent adjusts FPS up, BPS down"
+    movie_highlight 535..540,  625,200, 600, 400, "Encoder generates very little data"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Return to a complex contents",
+movie_slide "Fast and complex contents", "movies/5-Networking (take 2).mp4##start-time=550##stop-time=585##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
-    subtitle "Adjusting the other way around"
-    stepping
-    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=550##stop-time=585##noaudio"
+    subtitle "Case where the network is the actual limit"
+    movie_highlight 550..555, -25, 100, 650, 500, "Switch to fast and complex contents"
+    movie_highlight 555..560, -650, 50, 600, 800, "Client BPS now goes up as well"
+    movie_highlight 560..565, 650, -350, 600, 400, "Agent adjusts both FPS and BPS up"
+    movie_highlight 565..570,  625,200, 600, 400, "Encoder now network-limited"
+    movie_highlight 570..585, -650, 50, 600, 800, "Because client BPS reaches a plateau"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Return to nominal network",
+movie_slide "Return to nominal network", "movies/5-Networking (take 2).mp4##start-time=691##stop-time=720##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "Adjusting quality back up when network returns to normal"
-    stepping
-    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=691##stop-time=720##noaudio"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Highly degraded network",
+movie_slide "Highly degraded network", "movies/5-Networking (take 2).mp4##start-time=745##stop-time=900##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "A direct look at severe picture degradation"
-    stepping
-    full_screen_movie "movies/5-Networking (take 2).mp4##start-time=745##stop-time=900##noaudio"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Very slow client, no hardware acceleration",
+movie_slide "Very slow client, no hardware acceleration", "movies/4-macOS client - CPU overload.mp4##start-time=10##stop-time=50##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "macOS SPICE has no Quartz acceleration yet"
-    stepping
-    full_screen_movie "movies/4-macOS client - CPU overload.mp4##start-time=10##stop-time=50##noaudio"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Smart streaming also recovers in that case",
+movie_slide "Smart streaming also recovers in that case", "movies/4-macOS client - CPU overload.mp4##start-time=110##stop-time=150##noaudio",
 // ----------------------------------------------------------------------------
-    title page_label
     subtitle "Adjusts FPS aggressively down"
-    stepping
-    full_screen_movie "movies/4-macOS client - CPU overload.mp4##start-time=110##stop-time=150##noaudio"
+
+
+// ---------------------------------------------------------------------------
+movie_slide "Changing CPU-bound system to more challenging pages", "movies/4-macOS client - CPU overload.mp4##start-time=186##stop-time=250##noaudio",
+// ----------------------------------------------------------------------------
+    subtitle "Adjusts both FPS and quality until it caught up and visible FPS lowers down"
 
 
 // ---------------------------------------------------------------------------
@@ -553,7 +555,7 @@ base_slide "Conclusion",
     slide_picture "spice_logo_grey_background.png", 5%
     stepping
     story
-        * "Tagged metrics"
+        * "Tagged metrics (because we'll never run out of ideas)"
         ** "Currently FPS and BPS, received, decoded, displayed, dropped"
         ** "Also monitoring decoder queue length"
         ** "Can be updated without breaking the protocol"
@@ -563,7 +565,12 @@ base_slide "Conclusion",
         ** "Used the recorder tweaks to adjust behavior in real-time"
         ** "A convincing way to be sure that it actually work"
 
-        * "Work is ongoing"
+        * "We are (still) working on it"
+
+    right_picture
+        images funny_tag, "Pareto.png", "Perfect Storm.jpg", "Not Listening.png", "Differences.png", "Quantitative.png", "Real-Time Tuning.jpg", "Proof.jpg", "Working on it.jpg"
+
+funny_tag -> "tags/" & integer(page_time * 0.33 mod 10) & ".jpg"
 
 
 // ----------------------------------------------------------------------------
@@ -574,11 +581,11 @@ section_slide "Thank you",
     stepping
 
     contents 0,
-        text_box 500, -400, 600, 200,
+        text_box 200, -400, 600, 200,
             style "story"
             font_size 30
             anchor
                 image -80, -40, 10%, 10%, "Tao3D.png"
             paragraph "This Tao3D presentation is available at"
-            paragraph presentation_url
+            paragraph presentation_tao
     title_slide_logo
