@@ -1,3 +1,23 @@
+// ****************************************************************************
+//  SmartStreaming.ddd                              Tao3D Presentation
+// ****************************************************************************
+//
+//   File Description:
+//
+//     A presentaton about SPICE smart streaming
+//
+//     Meta: Why instrumentation matters
+//
+//     Meta Meta: It's not done until you can demo it
+//
+//
+//
+//
+// ****************************************************************************
+//  (C) 2018 Christophe de Dinechin <christophe@dinechin.org>
+//   This software is licensed under the GNU General Public License v3
+// ****************************************************************************
+
 presentation_title "SPICE Smart Streaming"
 presentation_logo "spice_logo.png"
 presentation_url "https://www.spice-space.org"
@@ -10,8 +30,8 @@ main_title_slide "Main title",
     title "SPICE Smart Streaming"
     subtitle
         $ "Optimize streaming encoding parameters for adverse conditions"
-        $ { font_size 30; text "Meta: Why does instrumentation matter?" }
-        $ { font_size 25; text "Meta²: You know it works if you can demo it" }
+        $ { font_size 30; text "Meta: Instrumentation matters" }
+        $ { font_size 25; text "Meta²: It's not done until you can demo it" }
         $
         $ presentation_author
 
