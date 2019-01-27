@@ -363,8 +363,8 @@ theme_layout "RedHat", "movie" ->
 // ----------------------------------------------------------------------------
 //    Centered flows
 // ----------------------------------------------------------------------------
-    flow   0,  550, slide_width, 80, "title"
-    flow   0, -550, slide_width, 80, "subtitle"
+    flow   0,  500, slide_width, 80, "title"
+    flow   0, -500, slide_width, 80, "subtitle"
 
 
 theme_layout "RedHat", "blank" ->
