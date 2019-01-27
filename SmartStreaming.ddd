@@ -457,9 +457,9 @@ movie_slide "Real-time algorithm tuning and tweaking", "movies/3-Smart streaming
 movie_slide "Observing the response after adjusting for quicker reaction", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=825##stop-time=856##noaudio",
 // ----------------------------------------------------------------------------
     subtitle "This approach can be used to select good-enough values"
-    movie_highlight 825..830, 575,   90, 650, 500, "A variety of GPU workloads"
-    movie_highlight 830..835, -650, 50, 600, 800, "Quickly measured by the client"
-    movie_highlight 835..840, 650, -350, 600, 400, "Agent responds faster"
+    movie_highlight 825..835, 575,   90, 650, 500, "A variety of GPU workloads"
+    movie_highlight 835..840, -650, 50, 600, 800, "Quickly measured by the client"
+    movie_highlight 840..845, 650, -350, 600, 400, "Agent responds faster"
 
 
 // ---------------------------------------------------------------------------
@@ -476,7 +476,7 @@ movie_slide "Impact of a network degradation without smart streaming", "movies/5
 movie_slide "The network accumulates frames and introduces latency", "movies/5-Networking (take 2).mp4##start-time=363##stop-time=390##noaudio",
 // ----------------------------------------------------------------------------
     subtitle "The network is buffering and releasing frames "
-    movie_highlight 363..367, -625, -450, 750, 100, "Lifting restriction"
+    movie_highlight 363..367, -625, -450, 750, 100, "Lifting restrictions"
     movie_highlight 367..372, -650, 50, 600, 800, """Catch-up"" spike"
     movie_highlight 372..375, -625, -450, 750, 100, "Restoring restrictions"
     movie_highlight 375..380, -25, 100, 650, 500, "Client freezes"
@@ -521,30 +521,72 @@ movie_slide "Fast and complex contents", "movies/5-Networking (take 2).mp4##star
 movie_slide "Return to nominal network", "movies/5-Networking (take 2).mp4##start-time=691##stop-time=720##noaudio",
 // ----------------------------------------------------------------------------
     subtitle "Adjusting quality back up when network returns to normal"
+    movie_highlight 690..695,  625,200, 600, 400, "More impact on X11 2D graphics!"
+    movie_highlight 695..700, -625, -450, 750, 100, "when we lifted restrictions"
+    movie_highlight 700..705, 650, -350, 600, 400, "Agent slowly increases FPS and BPS"
+    movie_highlight 705..710, -650, 50, 600, 800, "Incremental increase"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Highly degraded network", "movies/5-Networking (take 2).mp4##start-time=745##stop-time=900##noaudio",
+movie_slide "Highly degraded network", "movies/5-Networking (take 2).mp4##start-time=745##stop-time=780##noaudio",
 // ----------------------------------------------------------------------------
     subtitle "A direct look at severe picture degradation"
+    movie_highlight 745..750, -625, -450, 750, 100, "Add severe restrictions"
+    movie_highlight 750..755,  625,200, 600, 400, "X11 becomes very skippy"
+    movie_highlight 755..760, -25, 100, 650, 500, "SPICE client remains smooth"
+    movie_highlight 760..770, -25, 100, 650, 500, "Picture quality degrades"
+    movie_highlight 770..775, 650, -350, 600, 400, "Sharp adjustments for harder cases"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Very slow client, no hardware acceleration", "movies/4-macOS client - CPU overload.mp4##start-time=10##stop-time=50##noaudio",
+movie_slide "CPU-bound client with decoding queue buildup", "movies/4-macOS client - CPU overload.mp4##start-time=10##stop-time=37##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "macOS SPICE has no Quartz acceleration yet"
+    subtitle "macOS SPICE has software copy to framebuffer!"
+    movie_highlight 10..15, 410, 170, 580, 450, "Minimal changes, fast-paced"
+    movie_highlight 15..20, -470, 360, 480, 250, "Receive, Decode, can't Display!"
+    movie_highlight 20..25, -450, 80, 500, 200, "Not a bandwidth problem"
+    movie_highlight 25..30, -450, -170, 500, 200, "Undisplayed frames piling up"
+    movie_highlight 30..35, -450, -400, 500, 180, "Average queue length climbs"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Smart streaming also recovers in that case", "movies/4-macOS client - CPU overload.mp4##start-time=110##stop-time=150##noaudio",
+movie_slide "Client-side queue length causes display latency", "movies/4-macOS client - CPU overload.mp4##start-time=45##stop-time=50.5##noaudio",
+// ----------------------------------------------------------------------------
+    subtitle "macOS SPICE has software copy to framebuffer!"
+    movie_highlight 48..52, -450, -220, 500, 200, "Display latency also climbs"
+
+
+// ---------------------------------------------------------------------------
+movie_slide "Smart streaming also recovers in that case", "movies/4-macOS client - CPU overload.mp4##start-time=108##stop-time=137##noaudio",
 // ----------------------------------------------------------------------------
     subtitle "Adjusts FPS aggressively down"
+    movie_highlight 108..112, -30, -220, 530, 80, "Activating smart streaming"
+    movie_highlight 112..120, 520, -240, 400, 400, "Agent begins adjustments"
+    movie_highlight 120..125, -470, 360, 480, 250, "Received immediately drops!"
+    movie_highlight 125..130, -450, -400, 500, 180, "Queue length goes down"
+    movie_highlight 130..135, -450, -170, 500, 200, "Queue backlog evaporates"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Changing CPU-bound system to more challenging pages", "movies/4-macOS client - CPU overload.mp4##start-time=186##stop-time=250##noaudio",
+movie_slide "Complete recovery in under a minute", "movies/4-macOS client - CPU overload.mp4##start-time=200##stop-time=230##noaudio",
+// ----------------------------------------------------------------------------
+    subtitle "At that point, normal playback can resume, no delay"
+    movie_highlight 200..205, -450, -400, 500, 180, "Queue returns to almost empty"
+    movie_highlight 205..210, -450, -170, 500, 200, "Problem solved!"
+    movie_highlight 210..215, 410, 170, 580, 450, "Displaying in real-time again"
+    movie_highlight 215..220, -470, 360, 480, 250, "Reduced FPS, no overload!"
+
+
+
+// ---------------------------------------------------------------------------
+movie_slide "Changing CPU-bound system to more challenging pages", "movies/4-macOS client - CPU overload.mp4##start-time=260##stop-time=290##noaudio",
 // ----------------------------------------------------------------------------
     subtitle "Adjusts both FPS and quality until it caught up and visible FPS lowers down"
+    movie_highlight 260..265, 60, -320, 440, 400, "Server tries to push FPS up"
+    movie_highlight 265..270, 520, -240, 400, 400, "Agent applies requests"
+    movie_highlight 270..275, -470, 360, 480, 250, "Client overloads every time"
+    movie_highlight 275..280, -450, -400, 500, 180, "Queue builds up every time"
+    movie_highlight 280..285, 410, 170, 580, 450, "So we stay with low FPS"
 
 
 // ---------------------------------------------------------------------------
@@ -555,7 +597,7 @@ base_slide "Conclusion",
     slide_picture "spice_logo_grey_background.png", 5%
     stepping
     story
-        * "Tagged metrics (because we'll never run out of ideas)"
+        * "Tagged metrics (we may have new ideas)"
         ** "Currently FPS and BPS, received, decoded, displayed, dropped"
         ** "Also monitoring decoder queue length"
         ** "Can be updated without breaking the protocol"

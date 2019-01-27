@@ -286,7 +286,7 @@ theme_box "RedHat",Master:text,Style:text, X:real,Y:real,W:real,H:real ->
 
 
 movie_name -> ""
-movie_timing -> 1
+movie_timing -> 0
 movie_slide Title:text, Name:text, Body ->
 // ----------------------------------------------------------------------------
 //   Create a slide containing a full-screen movie
@@ -328,9 +328,9 @@ movie_highlight N:real..M:real, X:real, Y:real, W:real, H:real, Body ->
             rectangle X, Y - H/2 - 500, 4000, 1000
             rectangle X + W/2 + 1000, Y, 2000, H
             rectangle X - W/2 - 1000, Y, 2000, H
-            text_box X, Y + H/2 + 50, W-10, 90,
+            text_box X, Y + H/2 + 50, W-10, 100,
                 align 50%
-                vertical_align 50%
+                vertical_align 95%
                 font "Arial Rounded MT Bold", 30
                 color "yellow"
                 render Body
