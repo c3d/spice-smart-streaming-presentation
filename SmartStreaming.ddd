@@ -10,6 +10,8 @@ main_title_slide "Main title",
     title "SPICE Smart Streaming"
     subtitle
         $ "Optimize streaming encoding parameters for adverse conditions"
+        $ { font_size 30; text "Meta: Why does instrumentation matter?" }
+        $ { font_size 25; text "Meta²: You know it works if you can demo it" }
         $
         $ presentation_author
 
