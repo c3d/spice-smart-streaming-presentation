@@ -1075,3 +1075,24 @@ adjust_width "vsplit" ->
 adjust_width Other ->
     WIDTH := window_width
     HEIGHT := window_height
+
+
+
+// ============================================================================
+//
+//   Localization support
+//
+// ============================================================================
+
+LANG -> "fr"
+English fr French -> if LANG="fr" then French else English
+english Body -> if LANG="en" then Body
+french  Body -> if LANG="fr" then Body
+key "f" -> LANG := "fr"; refresh 0
+key "e" -> LANG := "en"; refresh 0
+
+lang_alternating -> 0
+key "a" -> lang_alternating := 1 - lang_alternating
+if lang_alternating > 0 and seconds mod 10 = 0 then
+    if LANG="en" then LANG := "fr" else LANG := "en"
+    refresh 10

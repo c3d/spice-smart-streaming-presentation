@@ -29,9 +29,9 @@ main_title_slide "Main title",
 // ----------------------------------------------------------------------------
     title "SPICE Smart Streaming"
     subtitle
-        $ "Optimize streaming encoding parameters for adverse conditions"
-        $ { font_size 30; text "Meta: Instrumentation matters" }
-        $ { font_size 25; text "Meta²: It's not done until you can demo it" }
+        $ "Optimize streaming encoding parameters for adverse conditions" fr "Optimiser les paramètres d'encodage en environnement hostile"
+        $ { font_size 30; text "Meta: Instrumentation matters" fr "Meta: L'instrumentation, ça compte" }
+        $ { font_size 25; text "Meta²: It's not done until you can demo it" fr "Meta²: Tant qu'on ne peut pas faire de démo, ça n'est pas fini" }
         $
         $ presentation_author
 
@@ -39,25 +39,25 @@ main_title_slide "Main title",
 
 
 // ---------------------------------------------------------------------------
-base_slide "SPICE Overview and Evolution",
+base_slide "SPICE Overview and Evolution" fr "SPICE: Vue d'ensemble et évolution",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "Open-source remote access to virtual machines"
+    subtitle "Open-source remote access to virtual machines" fr "Logiciel libre pour accéder à distance à des machines virtuelles"
     slide_picture "spice_logo_grey_background.png", 5%
     stepping
     story
-        * "Remote access to virtual machines"
-        ** "Portable client: Linux, Windows, macOS (almost)"
-        ** "Many components: Protocol, Server, Client, Agent, QXL, ..."
+        * "Remote access to virtual machines" fr "Accès à distance à des machines virtuelles"
+        ** "Portable client: Linux, Windows, macOS (almost)" fr "Client disponible pour Linux, Windows, macOS (presque)"
+        ** "Many components: Protocol, Server, Client, Agent, QXL, ..." fr "Plusieurs composants: Protocole, serveur, client, agent, QXL, ..."
 
-        * "In the middle of a painful transition to streaming"
-        ** "Initially designed to send 2D commands"
-        ** "Video detection and streaming, e.g. YouTube"
-        ** "Hardware-accelerated full-screen video streaming for 3D"
-        ** "Open-source specific issues: H264, patents, etc"
+        * "In the middle of a painful transition to streaming" fr "Douloureuse mutation vers un format vidéo"
+        ** "Initially designed to send 2D commands" fr "Au départ conçu pour envoyer de la 2D"
+        ** "Video detection and streaming, e.g. YouTube" fr "Détection des vidéos, par exemple YouTube"
+        ** "Hardware-accelerated full-screen video streaming for 3D" fr "Encodage vidéo plein écran avec accélération matérielle"
+        ** "Open-source specific issues: H264, patents, etc" fr "Le logiciel libre se heurte aux brevets H264"
 
-        * "Streaming is more sensitive to the environment"
-        ** "Smart streaming addresses that"
+        * "Streaming is more sensitive to the environment" fr "Les flux vidéo sont sensibles à l'environnement"
+        ** "Smart streaming addresses that" fr "C'est ça que le Smart Streaming optimise"
 
     right_picture
         images "rhel7_win7.png", "win7_rhel.png", "spice_schem.png", "Painful Transition.jpg", "Windows 3.jpg", "YouTube.png", "", "Patents are Evil.jpg", "", ""
@@ -87,7 +87,7 @@ base_slide "SPICE Overview and Evolution",
                     line_to  218, - 82
 
         image_only_at 8,
-            stamp "red", "Evil!"
+            stamp "red", "Evil!" fr "Mal!"
 
         image_only_at 9,
             scale 45%
@@ -110,10 +110,10 @@ base_slide "SPICE Overview and Evolution",
 import "Streaming.ddd"
 
 // ---------------------------------------------------------------------------
-base_slide "Traditional (2D) SPICE drawing model",
+base_slide "Traditional (2D) SPICE drawing model" fr "Modèle de rendu traditionnel (2D)",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "Sending commands describing how to draw the screen"
+    subtitle "Sending commands describing how to draw the screen" fr "Envoi de commandes décrivant comment dessiner sur l'écan"
     slide_picture "2D Logo.png", 5%
     stepping
     picture
@@ -161,10 +161,10 @@ base_slide "Traditional (2D) SPICE drawing model",
 
 
 // ---------------------------------------------------------------------------
-base_slide "Streaming (3D) SPICE drawing model",
+base_slide "Streaming (3D) SPICE drawing model" fr "Modèle de renu video (3D)",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "Use standard video encoding, hardware-accelerated"
+    subtitle "Use standard video encoding, hardware-accelerated" fr "Utilisation d'un encodage vidéo standard avec accélération matérielle"
     slide_picture "3D Logo.png", 5%
     stepping
     picture
@@ -250,18 +250,18 @@ base_slide "Streaming (3D) SPICE drawing model",
 
 
 // ---------------------------------------------------------------------------
-base_slide "Issues and bottlenecks with streaming",
+base_slide "Issues and bottlenecks with streaming" fr "Problèmes et limites du modèle vidéo",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "Not completely straightforward to identify"
+    subtitle "Not completely straightforward to identify" fr "Ces problèmes ne sont pas toujours évident à caractériser"
     stepping
     picture
         locally
             translate_y -250 * fade_out(page_time, 1)
             vdi { vdi_qxl 0 }
             flame -400, -50, "Client CPU"
-            flame -200, -25, "Bandwidth"
-            flame  -50, -75, "Latency"
+            flame -200, -75, "Bandwidth"
+            flame  -50, -25, "Latency"
             flame  150, -50, "Host CPU"
             flame  300,-100, "GPU (Draw)"
             flame  450, -50, "GPU (Encode)"
@@ -282,6 +282,15 @@ flame_target "Host CPU"         -> 0
 flame_target "GPU (Draw)"       -> 0
 flame_target "GPU (Encode)"     -> 0
 
+flame_fr_trans "Client CPU"     -> "CPU client"
+flame_fr_trans "Bandwidth"      -> "Bande passante"
+flame_fr_trans "Latency"        -> "Latence"
+flame_fr_trans "Host CPU"       -> "CPU hôte"
+flame_fr_trans "GPU (Draw)"     -> "GPU (rendu)"
+flame_fr_trans "GPU (Encode)"   -> "GPU (encodage)"
+
+flame_trans Name -> if LANG="fr" then flame_fr_trans Name else Name
+
 flame_invert N:integer -> N := 1 - N
 
 flame X, Y, Name ->
@@ -295,32 +304,32 @@ flame X, Y, Name ->
             align 50%
             vertical_align 10%
             bold
-            paragraph Name
+            text flame_trans Name
         on "click",
             flame_invert flame_target Name
 
 
 // ---------------------------------------------------------------------------
-base_slide "Creating tools to help identify problems",
+base_slide "Creating tools to help identify problems" fr "Créer les outils pour identifier le problème",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "A real-time, graphing, flight recorder"
+    subtitle "A real-time, graphing, flight recorder" fr "Une boîte noire en temps réel avec tracé de courbes"
     stepping
     picture
         only_at 1..2,
             image 0, 50, 48%, 48%, "Recorder Talk.png"
         only_at 2,
-            stamp "red", "Too Late!"
+            stamp "red", "Too Late!" fr "Trop tard!"
     only_at 3..4,
         full_screen_movie fade_at(smooth_step, 4), "movies/Recorder Interactivity.mp4##noaudio##input-repeat=-1"
     at_step 4
 
 
 // ---------------------------------------------------------------------------
-base_slide "Adding an extensible feedback mechanism",
+base_slide "Adding an extensible feedback mechanism" fr "Ajouter un mécanisme de mesure à distance",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "SPICE metrics: tagged data, measured and reported individually to server"
+    subtitle "SPICE metrics: tagged data, measured and reported individually to server" fr "Métriques SPICE: données nommées, mesurées et envoyées isolément au serveur"
     stepping
     picture
         vdi { vdi_qxl 0 }
@@ -342,22 +351,22 @@ gauge X:real, Y:real, A:real, N:integer ->
         color_hsv 137 * N, 80%, 80%
         gauge_text N
 
-gauge_text 0 -> $ "Frames received"
-gauge_text 1 -> $ "Frames decoded"
-gauge_text 2 -> $ "Frames displayed"
-gauge_text 3 -> $ "Frames dropped"
-gauge_text 4 -> $ "Bytes received"
-gauge_text 5 -> $ "Bytes decoded"
-gauge_text 6 -> $ "Bytes displayed"
-gauge_text 7 -> $ "Bytes dropped"
-gauge_text 8 -> $ "Queue length"
+gauge_text 0 -> $ "Frames received" fr "Trames reçues"
+gauge_text 1 -> $ "Frames decoded" fr "Tramers décodées"
+gauge_text 2 -> $ "Frames displayed" fr "Trames affichées"
+gauge_text 3 -> $ "Frames dropped" fr "Trames perdues"
+gauge_text 4 -> $ "Bytes received" fr "Octets reçus"
+gauge_text 5 -> $ "Bytes decoded" fr "Octets décodés"
+gauge_text 6 -> $ "Bytes displayed" fr "Octets affichés"
+gauge_text 7 -> $ "Bytes dropped" fr "Octets perdus"
+gauge_text 8 -> $ "Queue length" fr "File d'attente"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Adding an extensible control mechanism",
+base_slide "Adding an extensible control mechanism" fr "Ajouter un mécanisme de rétroaction",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "SPICE parameters: dynamic parameters sent by server to agent"
+    subtitle "SPICE parameters: dynamic values sent by server to agent" fr "Paramètres SPICE: Valeurs dynamiques envoyées par le serveur à l'agent"
     stepping
     picture
         vdi { vdi_qxl 0 }
@@ -385,251 +394,251 @@ knob X:real, Y:real, A:real, N:integer ->
         color_hsv 137 * N, 80%, 80%
         knob_text N
 
-knob_text 0 -> $ "Frames per second"
-knob_text 1 -> $ "Max bytes per second"
-knob_text 2 -> $ "Avg bytes per second"
-knob_text 3 -> $ "Quality"
+knob_text 0 -> $ "Frames per second" fr "Trames par seconde"
+knob_text 1 -> $ "Max bytes per second" fr "Max octets par seconde"
+knob_text 2 -> $ "Avg bytes per second" fr "Moy octets par seconde"
+knob_text 3 -> $ "Quality" fr "Qualité"
 
 
 // ---------------------------------------------------------------------------
-base_slide "Adding the smarts",
+base_slide "Adding the smarts" fr "Ajouter un peu d'intelligence",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "SPICE stream smarts: compute parameters from metrics"
+    subtitle "SPICE stream smarts: compute parameters from metrics" fr "Ajustement SPICE: calculer les paramètres à partir des métriques"
     slide_picture "Brain.png"
     stepping
     story
-        * "Configurable for experimentation purpose"
-        ** "Follow: just follow the metrics, if FPS is low, then lower FPS"
-        ** "Think: try to guess the bottleneck"
+        * "Configurable for experimentation purpose" fr "Configurable à fin d'expérimentation"
+        ** "Follow: just follow the metrics, if FPS is low, then lower FPS" fr "Suiveur: Recopie la métrique (images affichées)"
+        ** "Think: try to guess the bottleneck" fr "Malin: Essaye de deviner d'où vient le problème"
 
-        * "In practice, the simpler algorithm works just as well"
+        * "In practice, the simpler algorithm works just as well" fr "À l'usage, l'algorithme simple fonctionne aussi bien"
 
     right_picture
         images "Bidouiller.jpg", "carrey_dumber.jpg", "smart person.jpg", "Overthinking.jpg"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Typical SPICE testing setup",  "movies/3-Smart streaming demo, accelerated case.mp4##start-time=220##stop-time=266##noaudio",
+movie_slide "Typical SPICE testing setup" fr "Expérimentation typique avec SPICE",  "movies/3-Smart streaming demo, accelerated case.mp4##start-time=220##stop-time=266##noaudio",
 // ----------------------------------------------------------------------------
     subtitle
         color "#35A"
-        text "Left: Client  "
+        text "Left: Client  " fr "À gauche: Client  "
         color "#A53"
-        text "Middle: Server  "
+        text "Middle: Server  " fr "Milieu: Serveur  "
         color "#3A5"
-        text "Right: Guest / Agent  "
-    movie_highlight 220..224, 380, 320, 400, 100, "Starting the agent"
-    movie_highlight 225..230, -600, -50, 900, 800, "Graphical output window opens"
-    movie_highlight 235..240, 380,  0, 500, 100, "Starting agent instrumentation"
-    movie_highlight 255..265, -600, -50, 700, 900, "Starting client-side instrumentation"
+        text "Right: Guest / Agent  " fr "À droite: VM"
+    movie_highlight 220..224, 380, 320, 400, 100, "Starting the agent" fr "Démarrer l'agent"
+    movie_highlight 225..230, -600, -50, 900, 800, "Graphical output window opens" fr "La fenêtre graphique s'ouvre"
+    movie_highlight 235..240, 380,  0, 500, 100, "Starting agent instrumentation" fr "Instrumentation coté agent"
+    movie_highlight 255..265, -600, -50, 700, 900, "Starting client-side instrumentation" fr "Instrumentation coté client"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Hardware-accelerated client", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=455##stop-time=505##noaudio",
+movie_slide "Hardware-accelerated client" fr "Client avec accélération matérielle", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=455##stop-time=505##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "GPU-accelerated H264 rendering, direct to screen"
-    movie_highlight 455..460, -650, 50, 600, 800, "Client frames/bytes per second"
-    movie_highlight 460..465, -50,  50, 600, 800, "Server frames/bytes per second"
-    movie_highlight 465..470,  650, -50, 800, 500, "Variable GPU workload"
-    movie_highlight 470..475,  350, -450, 1200, 200, "Agent parameters (not active yet)"
-    movie_highlight 475..480,  650, -50, 800, 500, "GPU-intensive workload"
-    movie_highlight 480..485, -650, -150, 600, 400, "Client sees increase in BPS"
-    movie_highlight 485..490, -650, 250, 600, 400, "Client sees drop in FPS"
+    subtitle "GPU-accelerated H264 rendering, direct to screen" fr "GPU avec décodage H264 accéléré"
+    movie_highlight 455..460, -650, 50, 600, 800, "Client frames/bytes per second" fr "Fréquence et trafic coté client"
+    movie_highlight 460..465, -50,  50, 600, 800, "Server frames/bytes per second" fr "Fréquence et trafic coté serveur"
+    movie_highlight 465..470,  650, -50, 800, 500, "Variable GPU workload" fr "Charge GPU configurable"
+    movie_highlight 470..475,  350, -450, 1200, 200, "Agent parameters (not active yet)" fr "Paramètres coté agent (encore inactif)"
+    movie_highlight 475..480,  650, -50, 800, 500, "GPU-intensive workload" fr "Charge GPU élevée"
+    movie_highlight 480..485, -650, -150, 600, 400, "Client sees increase in BPS" fr "Le client reçoit plus de données"
+    movie_highlight 485..490, -650, 250, 600, 400, "Client sees drop in FPS" fr "Le nombre de trames par seconde chute"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Enabling smart streaming in the server", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=560##stop-time=564.5##noaudio",
+movie_slide "Enabling smart streaming in the server" fr "Activation du Smart Streaming", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=560##stop-time=564.5##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Using a tweak to select ""smart"" algorithm"
-    movie_highlight 560..565, -80, -130, 400, 100, "Activate 'dumb' algorithm"
+    subtitle "Using a tweak to select ""smart"" algorithm" fr "Utilisation d'un ""tweak"" pour sélectionner l'algorithme"
+    movie_highlight 560..565, -80, -130, 400, 100, "Activate 'dumb' algorithm" fr "Activons le mode suiveur"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Looking at the response of smart streaming", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=587##stop-time=635##noaudio",
+movie_slide "Looking at the response of smart streaming" fr "Observer la réaction du Smart Streaming", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=587##stop-time=635##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Depending on graphical workload, adjusts agent objectives"
-    movie_highlight 585..590,  50, -350, 600, 400, "Server computes parameters"
-    movie_highlight 590..595, 650, -350, 600, 400, "Agent applies parameters"
-    movie_highlight 598..605, 625,  -80, 650, 500, "Change GPU workload"
-    movie_highlight 610..615, 575,   90, 650, 500, "Very simple, 60 FPS workload"
-    movie_highlight 615..620, -650, 50, 600, 800, "Client FPS go up, bandwidth goes down"
-    movie_highlight 620..625,  50, -350, 600, 400, "Server follows: FPS++, BPS--"
-    movie_highlight 625..630, 650, -350, 600, 400, "Agent configures encoder"
+    subtitle "Depending on graphical workload, adjusts agent objectives" fr "Ajustement des objectifs de l'agent en fonction de la charge"
+    movie_highlight 585..590,  50, -350, 600, 400, "Server computes parameters" fr "Le serveur calcule les paramètres"
+    movie_highlight 590..595, 650, -350, 600, 400, "Agent applies parameters" fr "L'agent applique les paramètres"
+    movie_highlight 598..605, 625,  -80, 650, 500, "Change GPU workload" fr "Changeons la charge GPU"
+    movie_highlight 610..615, 575,   90, 650, 500, "Very simple, 60 FPS workload" fr "Charge très simple, 60 FPS"
+    movie_highlight 615..620, -650, 50, 600, 800, "Client FPS go up, bandwidth goes down" fr "Plus d'images, moins de données"
+    movie_highlight 620..625,  50, -350, 600, 400, "Server follows: FPS++, BPS--" fr "Le serveur suit"
+    movie_highlight 625..630, 650, -350, 600, 400, "Agent configures encoder" fr "L'agent reconfigure l'encodeur"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Providing tweakable arguments", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=732##stop-time=745##noaudio",
+movie_slide "Providing tweakable arguments" fr "Donner accès à des variables d'ajustement", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=732##stop-time=745##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "The list of arguments is self-documented"
-    movie_highlight 732..737, -80, -130, 400, 100, "Show server list of tweaks"
-    movie_highlight 737..745,  50, 300, 900, 250, "Tweaks listed in server log"
+    subtitle "The list of arguments is self-documented" fr "La liste des paramètres réglables est auto-documentée"
+    movie_highlight 732..737, -80, -130, 400, 100, "Show server list of tweaks" fr "Commande au serveur"
+    movie_highlight 737..745,  50, 300, 900, 250, "Tweaks listed in server log" fr "La liste est affichée dans le log serveur"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Real-time algorithm tuning and tweaking", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=768##stop-time=795##noaudio",
+movie_slide "Real-time algorithm tuning and tweaking" fr "Réglage de l'algorithme en temps réel", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=768##stop-time=795##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Adjust various weights and configuration parameters in real-time"
-    movie_highlight 768..775, -80, -130, 500, 100, "Make FPS response quicker"
-    movie_highlight 775..780, 575,   90, 650, 500, "Faster impact of workload change"
-    movie_highlight 780..790, -650, 50, 600, 800, "Observe change in FPS rate"
+    subtitle "Adjust various weights and configuration parameters in real-time" fr "Ajustement des poids relatifs et configuration en temps réel"
+    movie_highlight 768..775, -80, -130, 500, 100, "Make FPS response quicker" fr "Plus de poids pour la cible"
+    movie_highlight 775..780, 575,   90, 650, 500, "Faster impact of workload change" fr "Changement de la charge GPU"
+    movie_highlight 780..790, -650, 50, 600, 800, "Observe change in FPS rate" fr "Réponse plus rapide"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Observing the response after adjusting for quicker reaction", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=825##stop-time=856##noaudio",
+movie_slide "Observing the response after adjusting for quicker reaction" fr "Effet d'un réponse accélérée", "movies/3-Smart streaming demo, accelerated case.mp4##start-time=825##stop-time=856##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "This approach can be used to select good-enough values"
-    movie_highlight 825..835, 575,   90, 650, 500, "A variety of GPU workloads"
-    movie_highlight 835..840, -650, 50, 600, 800, "Quickly measured by the client"
-    movie_highlight 840..845, 650, -350, 600, 400, "Agent responds faster"
+    subtitle "This approach can be used to select good-enough values" fr "Cette méthode permet de choisir les bonnes valeurs par défaut"
+    movie_highlight 825..835, 575,   90, 650, 500, "A variety of GPU workloads" fr "Changement rapide de la charge"
+    movie_highlight 835..840, -650, 50, 600, 800, "Quickly measured by the client" fr "Mesurées rapidement par le client"
+    movie_highlight 840..845, 650, -350, 600, 400, "Agent responds faster" fr "Meilleure réactivité de l'agent"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Impact of a network degradation without smart streaming", "movies/5-Networking (take 2).mp4##start-time=265##stop-time=285##noaudio",
+movie_slide "Impact of a network degradation without smart streaming" fr "Effet d'un mauvais réseau sans Smart Streaming", "movies/5-Networking (take 2).mp4##start-time=265##stop-time=285##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "This is the real test: what happens when the network degrades?"
-    movie_highlight 265..270, -25, 100, 650, 500, "Demanding workload"
-    movie_highlight 270..275, -625, -450, 750, 100, "Restricted bandwidth"
-    movie_highlight 275..280, -650, 50, 600, 800, "Network-limited BPS and FPS"
-    movie_highlight 280..285, -25, 100, 650, 500, "Client skips, latency increases"
+    subtitle "This is the real test: what happens when the network degrades?" fr "Le test intéressant: quel est l'effet d'un réseau dégradé"
+    movie_highlight 265..270, -25, 100, 650, 500, "Demanding workload" fr "Charge exigeante"
+    movie_highlight 270..275, -625, -450, 750, 100, "Restricted bandwidth" fr "Bande passante restreinte"
+    movie_highlight 275..280, -650, 50, 600, 800, "Network-limited BPS and FPS" fr "Contraintes imposées par le réseau"
+    movie_highlight 280..285, -25, 100, 650, 500, "Client skips, latency increases" fr "Le client retarde, la latence augmente"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "The network accumulates frames and introduces latency", "movies/5-Networking (take 2).mp4##start-time=363##stop-time=390##noaudio",
+movie_slide "The network accumulates frames and introduces latency" fr "Les trames s'accumulent dans le réseau, d'où latence", "movies/5-Networking (take 2).mp4##start-time=363##stop-time=390##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "The network is buffering and releasing frames "
-    movie_highlight 363..367, -625, -450, 750, 100, "Lifting restrictions"
-    movie_highlight 367..372, -650, 50, 600, 800, """Catch-up"" spike"
-    movie_highlight 372..375, -625, -450, 750, 100, "Restoring restrictions"
-    movie_highlight 375..380, -25, 100, 650, 500, "Client freezes"
-    movie_highlight 380..385,  625,200, 600, 400, "Encoder ends up blocked"
-    movie_highlight 385..390, -25, 100, 650, 500, "Playback is very erratic"
+    subtitle "The network is buffering and releasing frames " fr "Les données sont stockées tant que le client ne les a pas affichées"
+    movie_highlight 363..367, -625, -450, 750, 100, "Lifting restrictions" fr "Levée des restrictions"
+    movie_highlight 367..372, -650, 50, 600, 800, """Catch-up"" spike" fr "Rattrapage"
+    movie_highlight 372..375, -625, -450, 750, 100, "Restoring restrictions" fr "Restrictions remises"
+    movie_highlight 375..380, -25, 100, 650, 500, "Client freezes" fr "Le client fait la pause"
+    movie_highlight 380..385,  625,200, 600, 400, "Encoder ends up blocked" fr "L'encodeur finit par bloquer"
+    movie_highlight 385..390, -25, 100, 650, 500, "Playback is very erratic" fr "Affichage saccadé"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Activating smart streaming and seeing how it reacts", "movies/5-Networking (take 2).mp4##start-time=448##stop-time=485##noaudio",
+movie_slide "Activating smart streaming and seeing how it reacts" fr "Effet de l'activation du Smart Streaming", "movies/5-Networking (take 2).mp4##start-time=448##stop-time=485##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Will give new parameters for frames per second and bytes per second"
-    movie_highlight 448..453, -50, -300, 650, 100, "Select 'dumb' algorithm"
-    movie_highlight 453..463, 650, -350, 600, 400, "BPS and FPS are now guided"
-    movie_highlight 463..468, -650, 50, 600, 800, "Client reports drop in BPS"
-    movie_highlight 468..473, 650, -350, 600, 400, "BPS drops faster than FPS"
-    movie_highlight 473..478, -25, 100, 650, 500, "Low FPS, degraded picture, NO latency"
-    movie_highlight 478..483,  625,200, 600, 400, "Encoder is NOT blocked"
+    subtitle "Will give new parameters for frames per second and bytes per second" fr "Le Smart Streaming va piloter la fréquence et le volume de l'encodage"
+    movie_highlight 448..453, -50, -300, 650, 100, "Select 'dumb' algorithm" fr "Algorithme simple"
+    movie_highlight 453..463, 650, -350, 600, 400, "BPS and FPS are now guided" fr "BPS et FPS sont maintenant pilotés"
+    movie_highlight 463..468, -650, 50, 600, 800, "Client reports drop in BPS" fr "Le client joue moins d'images"
+    movie_highlight 468..473, 650, -350, 600, 400, "BPS drops faster than FPS" fr "Le nombre d'images chute en premier"
+    movie_highlight 473..478, -25, 100, 650, 500, "Low FPS, degraded picture, NO latency" fr "Ralentissement, mais PAS de latence"
+    movie_highlight 478..483,  625,200, 600, 400, "Encoder is NOT blocked" fr "L'encodeur ne se bloque pas"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Case of a very fast, very simple page", "movies/5-Networking (take 2).mp4##start-time=520##stop-time=545##noaudio",
+movie_slide "Case of a very fast, very simple page" fr "Cas d'une page très simple et rapide", "movies/5-Networking (take 2).mp4##start-time=520##stop-time=545##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Page can have high FPS but low bandwidth requirements"
-    movie_highlight 520..525, -25, 100, 650, 500, "Switch to fast and simple contents"
-    movie_highlight 525..530, -650, 50, 600, 800, "Client FPS goes up, BPS remains low"
-    movie_highlight 530..535, 650, -350, 600, 400, "Agent adjusts FPS up, BPS down"
-    movie_highlight 535..540,  625,200, 600, 400, "Encoder generates very little data"
+    subtitle "Page can have high FPS but low bandwidth requirements" fr "Fréquence élevée, mais se contente de peu de données"
+    movie_highlight 520..525, -25, 100, 650, 500, "Switch to fast and simple contents" fr "Choix d'un contenu simple"
+    movie_highlight 525..530, -650, 50, 600, 800, "Client FPS goes up, BPS remains low" fr "FPS augmente, BPS reste bas"
+    movie_highlight 530..535, 650, -350, 600, 400, "Agent adjusts FPS up, BPS down" fr "L'agent ajuste FPS et BPS pour suivre"
+    movie_highlight 535..540,  625,200, 600, 400, "Encoder generates very little data" fr "L'encodeur génère peu de données"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Fast and complex contents", "movies/5-Networking (take 2).mp4##start-time=550##stop-time=585##noaudio",
+movie_slide "Fast and complex contents" fr "Contenu rapide et complexe", "movies/5-Networking (take 2).mp4##start-time=550##stop-time=585##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Case where the network is the actual limit"
-    movie_highlight 550..555, -25, 100, 650, 500, "Switch to fast and complex contents"
-    movie_highlight 555..560, -650, 50, 600, 800, "Client BPS now goes up as well"
-    movie_highlight 560..565, 650, -350, 600, 400, "Agent adjusts both FPS and BPS up"
-    movie_highlight 565..570,  625,200, 600, 400, "Encoder now network-limited"
-    movie_highlight 570..585, -650, 50, 600, 800, "Because client BPS reaches a plateau"
+    subtitle "Case where the network is the actual limit" fr "Retour à un cas où le réseau est le facteur limitant"
+    movie_highlight 550..555, -25, 100, 650, 500, "Switch to fast and complex contents" fr "Sélection d'un contenu rapide et complexe"
+    movie_highlight 555..560, -650, 50, 600, 800, "Client BPS now goes up as well" fr "Les BPS montent aussi coté client"
+    movie_highlight 560..565, 650, -350, 600, 400, "Agent adjusts both FPS and BPS up" fr "L'agent ajuste FPS et BPS vers le haut"
+    movie_highlight 565..570,  625,200, 600, 400, "Encoder now network-limited" fr "L'encodage se limite automatiquement"
+    movie_highlight 570..585, -650, 50, 600, 800, "Because client BPS reaches a plateau" fr "quand le client atteint un plateau"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Return to nominal network", "movies/5-Networking (take 2).mp4##start-time=691##stop-time=720##noaudio",
+movie_slide "Return to nominal network" fr "Retour à un réseau nominal", "movies/5-Networking (take 2).mp4##start-time=691##stop-time=720##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Adjusting quality back up when network returns to normal"
-    movie_highlight 690..695,  625,200, 600, 400, "More impact on X11 2D graphics!"
-    movie_highlight 695..700, -625, -450, 750, 100, "when we lifted restrictions"
-    movie_highlight 700..705, 650, -350, 600, 400, "Agent slowly increases FPS and BPS"
-    movie_highlight 705..710, -650, 50, 600, 800, "Incremental increase"
+    subtitle "Adjusting quality back up when network returns to normal" fr "La qualité remonte si le réseau redevient bon"
+    movie_highlight 690..695,  625,200, 600, 400, "More impact on X11 2D graphics!" fr "Impact sévère sur X11 (graphiques 2D)"
+    movie_highlight 695..700, -625, -450, 750, 100, "when we lifted restrictions" fr "disparaît quand on lève les restriction"
+    movie_highlight 700..705, 650, -350, 600, 400, "Agent slowly increases FPS and BPS" fr "La fréquence augmente petit à petit"
+    movie_highlight 705..710, -650, 50, 600, 800, "Incremental increase" fr "Amélioration incrémentale"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Highly degraded network", "movies/5-Networking (take 2).mp4##start-time=745##stop-time=780##noaudio",
+movie_slide "Highly degraded network" fr "Cas d'une dégradation plus sévère", "movies/5-Networking (take 2).mp4##start-time=745##stop-time=780##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "A direct look at severe picture degradation"
-    movie_highlight 745..750, -625, -450, 750, 100, "Add severe restrictions"
-    movie_highlight 750..755,  625,200, 600, 400, "X11 becomes very skippy"
-    movie_highlight 755..760, -25, 100, 650, 500, "SPICE client remains smooth"
-    movie_highlight 760..770, -25, 100, 650, 500, "Picture quality degrades"
-    movie_highlight 770..775, 650, -350, 600, 400, "Sharp adjustments for harder cases"
+    subtitle "A direct look at severe picture degradation" fr "Quand le réseau est si mauvais que la qualité d'image en souffre"
+    movie_highlight 745..750, -625, -450, 750, 100, "Add severe restrictions" fr "Restriction sévère"
+    movie_highlight 750..755,  625,200, 600, 400, "X11 becomes very skippy" fr "X11 devient chaotique"
+    movie_highlight 755..760, -25, 100, 650, 500, "SPICE client remains smooth" fr "Le client SPICE reste fluide"
+    movie_highlight 760..770, -25, 100, 650, 500, "Picture quality degrades" fr "L'image devient mauvaise"
+    movie_highlight 770..775, 650, -350, 600, 400, "Sharp adjustments for harder cases" fr "Gros ajustement pour cas difficile"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "CPU-bound client with decoding queue buildup", "movies/4-macOS client - CPU overload.mp4##start-time=10##stop-time=37##noaudio",
+movie_slide "CPU-bound client with decoding queue buildup" fr "Cas du client surchargé qui décode lentement", "movies/4-macOS client - CPU overload.mp4##start-time=10##stop-time=37##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "macOS SPICE has software copy to framebuffer!"
-    movie_highlight 10..15, 410, 170, 580, 450, "Minimal changes, fast-paced"
-    movie_highlight 15..20, -470, 360, 480, 250, "Receive, Decode, can't Display!"
-    movie_highlight 20..25, -450, 80, 500, 200, "Not a bandwidth problem"
-    movie_highlight 25..30, -450, -170, 500, 200, "Undisplayed frames piling up"
-    movie_highlight 30..35, -450, -400, 500, 180, "Average queue length climbs"
+    subtitle "macOS SPICE has software copy to framebuffer!" fr "Le client macOS a une copie très lente vers l'écran"
+    movie_highlight 10..15, 410, 170, 580, 450, "Minimal changes, fast-paced" fr "Image minimale mais rapide"
+    movie_highlight 15..20, -470, 340, 480, 200, "Receive, Decode, can't Display!" fr "Reçu, décodé, mais pas affiché"
+    movie_highlight 20..25, -450, 80, 500, 200, "Not a bandwidth problem" fr "La bande passante est là"
+    movie_highlight 25..30, -450, -170, 500, 200, "Undisplayed frames piling up" fr "Les trames à afficher s'accumulent"
+    movie_highlight 30..35, -450, -400, 500, 180, "Average queue length climbs" fr "Leur nombre augmente fortement"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Client-side queue length causes display latency", "movies/4-macOS client - CPU overload.mp4##start-time=45##stop-time=50.5##noaudio",
+movie_slide "Client-side queue length causes display latency" fr "Le stockage coté client entraîne une forte latence", "movies/4-macOS client - CPU overload.mp4##start-time=45##stop-time=50.5##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "macOS SPICE has software copy to framebuffer!"
-    movie_highlight 48..52, -450, -220, 500, 200, "Display latency also climbs"
+    subtitle "macOS SPICE has software copy to framebuffer!" fr "Le client macOS a une copie très lente vers l'écran"
+    movie_highlight 48..52, -450, -220, 500, 200, "Display latency also climbs" fr "La latence d'affichage grimpe (sans limite)"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Smart streaming also recovers in that case", "movies/4-macOS client - CPU overload.mp4##start-time=108##stop-time=137##noaudio",
+movie_slide "Smart streaming also recovers in that case" fr "Le Smart Streaming corrige aussi ce cas", "movies/4-macOS client - CPU overload.mp4##start-time=108##stop-time=137##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Adjusts FPS aggressively down"
-    movie_highlight 108..112, -30, -220, 530, 80, "Activating smart streaming"
-    movie_highlight 112..120, 520, -240, 400, 400, "Agent begins adjustments"
-    movie_highlight 120..125, -470, 360, 480, 250, "Received immediately drops!"
-    movie_highlight 125..130, -450, -400, 500, 180, "Queue length goes down"
-    movie_highlight 130..135, -450, -170, 500, 200, "Queue backlog evaporates"
+    subtitle "Adjusts FPS aggressively down" fr "Ajustement agressif de la fréquence"
+    movie_highlight 108..112, -30, -220, 530, 80, "Activating smart streaming" fr "Activation du Smart Streaming"
+    movie_highlight 112..120, 520, -240, 400, 400, "Agent begins adjustments" fr "L'agent prend le contrôle"
+    movie_highlight 120..125, -470, 340, 480, 200, "Received immediately drops!" fr "La fréquence de réception chute"
+    movie_highlight 125..130, -450, -400, 500, 180, "Queue length goes down" fr  "Le nombre d'images baisse"
+    movie_highlight 130..135, -450, -170, 500, 200, "Queue backlog evaporates" fr "Le retard accumulé s'évapore"
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Complete recovery in under a minute", "movies/4-macOS client - CPU overload.mp4##start-time=200##stop-time=230##noaudio",
+movie_slide "Complete recovery in under a minute" fr "Récupération complète en moins d'une minute", "movies/4-macOS client - CPU overload.mp4##start-time=200##stop-time=230##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "At that point, normal playback can resume, no delay"
-    movie_highlight 200..205, -450, -400, 500, 180, "Queue returns to almost empty"
-    movie_highlight 205..210, -450, -170, 500, 200, "Problem solved!"
-    movie_highlight 210..215, 410, 170, 580, 450, "Displaying in real-time again"
-    movie_highlight 215..220, -470, 360, 480, 250, "Reduced FPS, no overload!"
+    subtitle "At that point, normal playback can resume, no delay" fr "À partir de là, l'affichage sera sans délai"
+    movie_highlight 200..205, -450, -400, 500, 180, "Queue returns to almost empty" fr "Plus d'images en attente"
+    movie_highlight 205..210, -450, -170, 500, 200, "Problem solved!" fr "Problème résolu!"
+    movie_highlight 210..215, 410, 170, 580, 450, "Displaying in real-time again" fr "Affichage à nouveau en temps réel"
+    movie_highlight 215..220, -470, 340, 480, 200, "Reduced FPS, no overload!" fr "Fréquence auto-limitée"
 
 
 
 // ---------------------------------------------------------------------------
-movie_slide "Changing CPU-bound system to more challenging pages", "movies/4-macOS client - CPU overload.mp4##start-time=260##stop-time=290##noaudio",
+movie_slide "Attempts to push CPU bound beyond capacity" fr "Impossible de dépasser la capacité du client", "movies/4-macOS client - CPU overload.mp4##start-time=260##stop-time=290##noaudio",
 // ----------------------------------------------------------------------------
-    subtitle "Adjusts both FPS and quality until it caught up and visible FPS lowers down"
-    movie_highlight 260..265, 60, -320, 440, 400, "Server tries to push FPS up"
-    movie_highlight 265..270, 520, -240, 400, 400, "Agent applies requests"
-    movie_highlight 270..275, -470, 360, 480, 250, "Client overloads every time"
-    movie_highlight 275..280, -450, -400, 500, 180, "Queue builds up every time"
-    movie_highlight 280..285, 410, 170, 580, 450, "So we stay with low FPS"
+    subtitle "Adjusts both FPS and quality until it caught up and visible FPS lowers down" fr "Ajustement simultané de la fréquence et de la qualité"
+    movie_highlight 260..265, 60, -320, 440, 400, "Server tries to push FPS up" fr "Le serveur essaie d'augmenter la fréquence"
+    movie_highlight 265..270, 520, -240, 400, 400, "Agent applies requests" fr "L'agent applique"
+    movie_highlight 270..275, -470, 340, 480, 200, "Client overloads every time" fr "Le client surcharge chaque fois"
+    movie_highlight 275..280, -450, -400, 500, 180, "Queue builds up every time" fr "Retard détecté à chaque fois"
+    movie_highlight 280..285, 410, 170, 580, 450, "So we stay with low FPS" fr "Retour à une fréquence basse"
 
 
 // ---------------------------------------------------------------------------
 base_slide "Conclusion",
 // ----------------------------------------------------------------------------
     title page_label
-    subtitle "Mechanism to send metrics, take action and control parameters"
+    subtitle "Mechanism to send metrics, take action and control parameters" fr "Un mécanisme pour mesurer, décider et contrôler les paramètres"
     slide_picture "spice_logo_grey_background.png", 5%
     stepping
     story
-        * "Tagged metrics (we may have new ideas)"
-        ** "Currently FPS and BPS, received, decoded, displayed, dropped"
-        ** "Also monitoring decoder queue length"
-        ** "Can be updated without breaking the protocol"
+        * "Tagged metrics (we may have new ideas)" fr "Métriques nommées (champ libre pour idées futures)"
+        ** "Currently FPS and BPS, received, decoded, displayed, dropped" fr "Actuellement fréquence et volume reçus, décodés, affichés et perdus"
+        ** "Also monitoring decoder queue length" fr "Vérification des queues d'encodage et d'affichage"
+        ** "Can be updated without breaking the protocol" fr "Mises à jour possibles sans casser le protocole"
 
-        * "Qualitative picture evaluation was too difficult"
-        ** "Used the recorder library to have quantitative results"
-        ** "Used the recorder tweaks to adjust behavior in real-time"
-        ** "A convincing way to be sure that it actually work"
+        * "Qualitative picture evaluation was too difficult" fr "L'évaluation qualitative d'images est impossible"
+        ** "Used the recorder library to have quantitative results" fr "Le 'recorder' parmet d'avoir des résultats quantifiés"
+        ** "Used the recorder tweaks to adjust behavior in real-time" fr "Les 'tweaks' permettent d'ajuster le comportement en temps réel"
+        ** "A convincing way to be sure that it actually work" fr "C'est une façon convainquante de vérifier que ça marche"
 
-        * "We are (still) working on it"
+        * "We are (still) working on it" fr "Il y a encore beaucoup de travil"
 
     right_picture
         images funny_tag, "Pareto.png", "Perfect Storm.jpg", "Not Listening.png", "Differences.png", "Quantitative.png", "Real-Time Tuning.jpg", "Proof.jpg", "Working on it.jpg"
@@ -638,7 +647,7 @@ funny_tag -> "tags/" & integer(page_time * 0.33 mod 10) & ".jpg"
 
 
 // ----------------------------------------------------------------------------
-section_slide "Thank you",
+section_slide "Thank you" fr "Merci",
 // ----------------------------------------------------------------------------
     title page_label
     subtitle presentation_url
@@ -650,6 +659,6 @@ section_slide "Thank you",
             font_size 30
             anchor
                 image -80, -40, 10%, 10%, "Tao3D.png"
-            paragraph "This Tao3D presentation is available at"
+            paragraph "This Tao3D presentation is available at" fr "Présentation disponible à l'adresse"
             paragraph presentation_tao
     title_slide_logo
