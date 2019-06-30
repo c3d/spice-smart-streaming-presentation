@@ -161,7 +161,7 @@ base_slide "Traditional (2D) SPICE drawing model" fr "Modèle de rendu tradition
 
 
 // ---------------------------------------------------------------------------
-base_slide "Streaming (3D) SPICE drawing model" fr "Modèle de renu video (3D)",
+base_slide "Streaming (3D) SPICE drawing model" fr "Modèle de rendu video (3D)",
 // ----------------------------------------------------------------------------
     title page_label
     subtitle "Use standard video encoding, hardware-accelerated" fr "Utilisation d'un encodage vidéo standard avec accélération matérielle"
@@ -635,10 +635,10 @@ base_slide "Conclusion",
 
         * "Qualitative picture evaluation was too difficult" fr "L'évaluation qualitative d'images est impossible"
         ** "Used the recorder library to have quantitative results" fr "Le 'recorder' parmet d'avoir des résultats quantifiés"
-        ** "Used the recorder tweaks to adjust behavior in real-time" fr "Les 'tweaks' permettent d'ajuster le comportement en temps réel"
+        ** "Used the recorder tweaks to adjust behavior in real-time" fr "Les 'tweaks' ajustent le comportement en temps réel"
         ** "A convincing way to be sure that it actually work" fr "C'est une façon convainquante de vérifier que ça marche"
 
-        * "We are (still) working on it" fr "Il y a encore beaucoup de travil"
+        * "We are (still) working on it" fr "Il y a encore beaucoup de travail"
 
     right_picture
         images funny_tag, "Pareto.png", "Perfect Storm.jpg", "Not Listening.png", "Differences.png", "Quantitative.png", "Real-Time Tuning.jpg", "Proof.jpg", "Working on it.jpg"

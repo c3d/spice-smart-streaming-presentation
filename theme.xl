@@ -305,7 +305,7 @@ movie_slide Title:text, Name:text, Body ->
                     font "Arial", 20
                     color "yellow"
                     text "Time=" & movie_time movie_name
-        on "key:t",
+        on "key:Control-t",
             movie_timing := 1 - movie_timing
 movie_slide Title:text, Name:text -> movie_slide Title, Name, false
 
