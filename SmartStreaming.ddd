@@ -30,7 +30,7 @@ main_title_slide "Main title",
     title "SPICE Smart Streaming"
     subtitle
         $ "Optimize streaming encoding parameters for adverse conditions" fr "Optimiser les paramètres d'encodage en environnement hostile"
-        $ { font_size 30; text "Meta: Instrumentation matters" fr "Meta: L'instrumentation, ça compte" }
+        $ { font_size 32; text "Meta: Instrumentation matters - Use the recorder library" fr "Meta: L'instrumentation, ça compte! Utilisez la librairie recorder..." }
         $ { font_size 25; text "Meta²: It's not done until you can demo it" fr "Meta²: Tant qu'on ne peut pas faire de démo, ça n'est pas fini" }
         $
         $ presentation_author
