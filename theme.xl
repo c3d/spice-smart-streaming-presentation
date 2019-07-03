@@ -121,7 +121,7 @@ theme_background "RedHat", "main" ->
 // ----------------------------------------------------------------------------
     clear_color "#A21400"
 
-    background -250,
+    background -25000,
         translate_y -120
         shader_show "shaders/clouds.fs",
             shader_resolution
@@ -132,13 +132,13 @@ theme_background "RedHat", "main" ->
             shader_depth 100%
             shader_channel 0, "tex11.png"
 
-    background -200,
+    background -20000,
         blend_function_separate "dst_color", "src_color", "src_alpha", "dst_alpha"
         color "#D20400", 80%
         rotate_z 45
         rectangle 3000, 1600
 
-    background -100,
+    background -19000,
         blend_function_separate "dst_color", "src_color", "src_alpha", "dst_alpha"
         color redhat_red1, 70%
         rotate_z 45
@@ -218,12 +218,12 @@ theme_background "RedHat", Master ->
                 line_to -B, -B
     contents -100,
         color "lightgray"
-        rectangle 0, -480, 1700, 2
+        rectangle 0, footer_vpos + 30, 1700, 2
     contents -50,
         color "white"
-        image 800, -510, 100%, 100%, "RedHat-BlackText.png"
+        image 800, footer_vpos, 100%, 100%, "RedHat-BlackText.png"
     contents -50,
-        box -790, -510, 120, 50,
+        box -790, footer_vpos, 120, 50,
             vertical_align 0.5
             font_size 22
             text "Page " & page_number
@@ -231,12 +231,12 @@ theme_background "RedHat", Master ->
             on "pageentry",
                 refresh 0.1
     contents 0,
-        box 0, -510, 1400, 50,
+        box 0, footer_vpos, 1400, 50,
             vertical_align 0.5
             font_size 22
             text presentation_title
     contents -20,
-        box 0, -510, 1400, 50,
+        box 0, footer_vpos, 1400, 50,
             vertical_align 0.5
             font_size 22
             align_right
@@ -287,6 +287,23 @@ theme_box "RedHat",Master:text,Style:text, X:real,Y:real,W:real,H:real ->
 
 movie_name -> ""
 movie_timing -> 0
+movie_pause_time -> 1.0e9
+movie_pause_disable -> 0.0
+
+movie_last_time -> 0.0
+movie_held_time Name:text ->
+// ----------------------------------------------------------------------------
+// Workaround for 'movie_time' still counting when movie is paused
+// ----------------------------------------------------------------------------
+//  There is apparently a bug in movie_time in 1.61, where it keeps
+//  counting time even when the movie is on pause.
+//  Work around that bug so that the logic that depends on movie_time works.
+
+    if not movie_paused Name then
+        movie_last_time := movie_time Name
+    movie_last_time
+
+
 movie_slide Title:text, Name:text, Body ->
 // ----------------------------------------------------------------------------
 //   Create a slide containing a full-screen movie
@@ -297,6 +314,10 @@ movie_slide Title:text, Name:text, Body ->
         stepping
         Body
         full_screen_movie 1, Name
+        if movie_pause_time <> movie_pause_disable then
+            if movie_held_time Name >= movie_pause_time then
+                movie_pause Name
+                movie_pause_disable := movie_pause_time
         if movie_timing = 1 then
             contents 200,
                 text_box 800, 500, 200, 50,
@@ -304,9 +325,24 @@ movie_slide Title:text, Name:text, Body ->
                     vertical_align 0%
                     font "Arial", 20
                     color "yellow"
-                    text "Time=" & movie_time movie_name
-        on "key:Control-t",
+                    if movie_paused Name then
+                        color "red"
+                    paragraph "Time=" & (0.1*integer(10*movie_held_time movie_name))
+                    if movie_pause_time = movie_pause_disable then
+                        paragraph "Stopped=" & movie_pause_time
+                    else
+                        paragraph "Pause=" & movie_pause_time
+        on "key:Control-I",
             movie_timing := 1 - movie_timing
+        on "key:Right",
+            movie_play Name
+            movie_pause_time := 1.0e9
+        on "key:Space",
+            movie_play Name
+            movie_pause_time := 1.0e9
+        on "pageexit",
+            movie_pause_disable := 0.0
+            movie_pause_time := 1.0e9
 movie_slide Title:text, Name:text -> movie_slide Title, Name, false
 
 
@@ -314,9 +350,12 @@ movie_highlight N:real..M:real, X:real, Y:real, W:real, H:real, Body ->
 // ----------------------------------------------------------------------------
 //    Higlight a region of the screen based on current movie time
 // ----------------------------------------------------------------------------
-    if movie_time movie_name in N-0.5..M+0.5 then
+    if movie_held_time movie_name in N-0.5..M+0.5 then
+        if movie_pause_disable < M then
+            if movie_held_time movie_name in N..M then
+                movie_pause_time := M - 0.5
         contents 90,
-            show fade_between(movie_time movie_name, N+0.5, M-0.5)
+            show fade_between(movie_held_time movie_name, N+0.5, M-0.5)
             color "transparent"
             line_color_hsv 90 + 20 * sin time, 100%, 100%, 90%
             line_width 5
@@ -347,6 +386,21 @@ theme_layout "RedHat", "main" ->
 // ----------------------------------------------------------------------------
 //    Centered flows
 // ----------------------------------------------------------------------------
+    if mouse_x > 300 and mouse_y < -200 then
+       light 0
+       light_position 200, 100, -450
+       light_diffuse "white"
+       light_specular "yellow"
+       light 1
+       light_position 1000, 150, 300
+       light_specular "yellow"
+       light_diffuse "#48F"
+       translate_x 1400
+       rotate_y -40 + 5 * sin time
+       translate_x -1400
+       translate_z -3500 + 200 * time mod 6000
+       extrude_depth 10
+       scale 150%
     flow 100,    0, 1000, 200, "title"
     flow 100, -200, 1000, 250, "subtitle"
 
@@ -359,12 +413,18 @@ theme_layout "RedHat", "section" ->
     flow 0, -100, 1800, 150, "subtitle"
 
 
+widescreen -> window_width * 10 >= window_height * 16
+movie_label_vpos -> if widescreen then 500 else 600
+title_vpos -> if widescreen then 420 else 550
+footer_vpos -> if widescreen then -510 else -660
+
+
 theme_layout "RedHat", "movie" ->
 // ----------------------------------------------------------------------------
 //    Centered flows
 // ----------------------------------------------------------------------------
-    flow   0,  500, slide_width, 80, "title"
-    flow   0, -500, slide_width, 80, "subtitle"
+    flow   0,  movie_label_vpos, slide_width, 80, "title"
+    flow   0, -movie_label_vpos, slide_width, 80, "subtitle"
 
 
 theme_layout "RedHat", "blank" ->
@@ -378,7 +438,7 @@ theme_layout "RedHat", Master:text ->
 // ----------------------------------------------------------------------------
 //    Centered flows
 // ----------------------------------------------------------------------------
-    flows   0,  400, 1800, 220, "title", "subtitle"
+    flows   0,  title_vpos, 1800, 220, "title", "subtitle"
     flow    0,  -80, 1800, 700, "story"
     flow -475,  -80,  850, 700, "left"
     flow  475,  -80,  850, 700, "right"
@@ -390,11 +450,12 @@ slide_picture Picture:text, Round:real ->
 //   Show a picture in a slide
 // ----------------------------------------------------------------------------
     contents 100,
-        translate 800, 420, 0
+        translate 800, title_vpos + 20, 0
         texture Picture
         color "white"
         scale min(200.0 / texture_width, 200.0 / texture_height)
         rounded_rectangle 0, 0, texture_width, texture_height, Round * max(texture_width, texture_height)
+
 
 slide_shader Shader:text -> slide_shader Shader, false
 slide_shader Shader:text, Body ->
@@ -417,12 +478,13 @@ slide_shader Shader:text, Body ->
         color "white"
         rectangle 256, 256
 
+
 title_slide_logo ->
 // ----------------------------------------------------------------------------
 //   The logo on the title slides
 // ----------------------------------------------------------------------------
     picture
-        translate 600, 450, 20
+        translate 600, title_vpos + 30, 20
         texture presentation_logo
         color "white"
         scale min(300.0 / texture_width, 300.0 / texture_height)
@@ -861,9 +923,10 @@ once
 
 contents 0,
     color "lightgray"
-    rectangle 0, -482, 1700 * (seconds_time - START_TIME) / TOTAL_DURATION, 2
+    translate_y footer_vpos + 33
+    rectangle 0, 0, 0.9 * window_width * (seconds_time - START_TIME) / TOTAL_DURATION, 2
     if page_count > 0 then
-        rectangle 0, -478, 1700 * page_number / page_count, 2
+        rectangle 0, 4, 0.9 * window_width * page_number / page_count, 2
 
 
 // ============================================================================
