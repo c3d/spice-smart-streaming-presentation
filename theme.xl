@@ -375,6 +375,47 @@ movie_highlight N:real..M:real, X:real, Y:real, W:real, H:real, Body ->
                 render Body
 
 
+// ============================================================================
+//
+//   Totally indispensable "Grumpy Cat" function
+//
+// ============================================================================
+
+grumpy_cat One, Two ->
+    texture "grumpy_cat.jpg"
+    color "white"
+    rectangle texture_width, texture_height
+    text_box 0, 0, texture_width, texture_height,
+        font "Impact", 80
+        color "white", 60%
+        line_color "black"
+        vertical_align 0%
+        align 50%
+        texture ""
+        render One
+    text_box 0, 0, texture_width, texture_height,
+        font "Impact", 80
+        color "white", 60%
+        line_color "black"
+        vertical_align 100%
+        align 50%
+        texture ""
+        render Two
+
+grumpy_cat Body ->
+    texture "grumpy_cat.jpg"
+    color "white"
+    rectangle texture_width, texture_height
+    text_box 0, 0, texture_width, texture_height,
+        font "Impact", 80
+        color "white", 60%
+        line_color "black"
+        vertical_align 0%
+        align 50%
+        texture ""
+        render Body
+
+
 
 // ============================================================================
 //
@@ -750,10 +791,16 @@ images N:integer, X, Y ->
 images N:integer, "" -> false
 images N:integer, Name:text ->
     image_only_at N,
-        rotate_z 3 * sin (2 * N) ^ 5
+        rotate_z 3 * sin (2 * N) ^ 5 + 2*sin(0.3 * time)
         texture Name
         scale min(850.0 / texture_width, 640.0 / texture_height)
         rectangle texture_width, texture_height
+images_code N:integer, Body ->
+    image_only_at N,
+        locally
+            rotate_z 3 * sin (2 * N) ^ 5 + 2*sin(0.3 * time)
+            Body
+
 images List -> images 1, List
 
 

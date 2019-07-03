@@ -641,7 +641,10 @@ base_slide "Conclusion",
         * "We are (still) working on it" fr "Il y a encore beaucoup de travail"
 
     right_picture
-        images funny_tag, "Pareto.png", "Perfect Storm.jpg", "Not Listening.png", "Differences.png", "Quantitative.png", "Real-Time Tuning.jpg", "Proof.jpg", "Working on it.jpg"
+        images funny_tag, "Pareto.png", "Perfect Storm.jpg", "",  "Differences.png", "Quantitative.png", "Real-Time Tuning.jpg", "Proof.jpg", "Working on it.jpg"
+        images_code 4,
+            scale 50%
+            grumpy_cat "Are you talking to me?" fr "Vous essayez de me parler?", "because if you are, I'm not listening" fr "Parce qu'en fait, j'écoute pas"
 
 funny_tag -> "tags/" & integer(page_time * 0.33 mod 10) & ".jpg"
 
