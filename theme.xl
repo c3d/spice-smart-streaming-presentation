@@ -792,14 +792,15 @@ images N:integer, "" -> false
 images N:integer, Name:text ->
     image_only_at N,
         rotate_z 3 * sin (2 * N) ^ 5 + 2*sin(0.3 * time)
+        rotate_y 25 * cos(0.12 * time)
         texture Name
         scale min(850.0 / texture_width, 640.0 / texture_height)
         rectangle texture_width, texture_height
 images_code N:integer, Body ->
     image_only_at N,
-        locally
-            rotate_z 3 * sin (2 * N) ^ 5 + 2*sin(0.3 * time)
-            Body
+        rotate_z 3 * sin (2 * N) ^ 5 + 2*sin(0.3 * time)
+        rotate_y 10 * cos(0.12 * time)
+        Body
 
 images List -> images 1, List
 
