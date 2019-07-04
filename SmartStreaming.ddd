@@ -18,11 +18,11 @@
 //   This software is licensed under the GNU General Public License v3
 // ****************************************************************************
 
-presentation_title "SPICE Smart Streaming"
-presentation_logo "spice_logo.png"
-presentation_url "https://www.spice-space.org"
-presentation_tao "https://github.com/c3d/spice-smart-streaming-presentation"
-presentation_author "Christophe de Dinechin (dinechin@redhat.com, IRC c3d)"
+presentation_title      "SPICE Smart Streaming"
+presentation_logo       "spice_logo.png"
+presentation_url        "https://www.spice-space.org"
+presentation_tao        "https://github.com/c3d/spice-smart-streaming-presentation"
+presentation_author     "Christophe de Dinechin (dinechin@redhat.com, IRC c3d)"
 
 // ----------------------------------------------------------------------------
 main_title_slide "Main title",
