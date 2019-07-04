@@ -381,39 +381,24 @@ movie_highlight N:real..M:real, X:real, Y:real, W:real, H:real, Body ->
 //
 // ============================================================================
 
-grumpy_cat One, Two ->
+grumpy_cat Top, Bottom ->
     texture "grumpy_cat.jpg"
     color "white"
     rectangle texture_width, texture_height
+    font "Impact", 80
+    color "white", 60%
+    line_color "black"
+    align 50%
     text_box 0, 0, texture_width, texture_height,
-        font "Impact", 80
-        color "white", 60%
-        line_color "black"
         vertical_align 0%
-        align 50%
         texture ""
-        render One
+        render Top
     text_box 0, 0, texture_width, texture_height,
-        font "Impact", 80
-        color "white", 60%
-        line_color "black"
         vertical_align 100%
-        align 50%
         texture ""
-        render Two
+        render Bottom
 
-grumpy_cat Body ->
-    texture "grumpy_cat.jpg"
-    color "white"
-    rectangle texture_width, texture_height
-    text_box 0, 0, texture_width, texture_height,
-        font "Impact", 80
-        color "white", 60%
-        line_color "black"
-        vertical_align 0%
-        align 50%
-        texture ""
-        render Body
+grumpy_cat Top -> grumpy_cat Top, ""
 
 
 
